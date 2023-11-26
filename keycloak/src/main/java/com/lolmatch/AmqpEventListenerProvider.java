@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class AmqpEventListenerProvider implements EventListenerProvider {
-
+	
 	private static final Logger logger = Logger.getLogger(AmqpEventListenerProvider.class.getName());
 	
 	Connection connection;
