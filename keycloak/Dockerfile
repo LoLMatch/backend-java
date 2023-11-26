@@ -14,15 +14,19 @@ FROM keycloak/keycloak:22.0.5
 #ENV KC_LO=file
 
 # Create admin
-#ENV KEYCLOAK_ADMIN=admin
-#ENV KEYCLOAK_ADMIN_PASSWORD=password
+ENV KEYCLOAK_ADMIN=admin
+ENV KEYCLOAK_ADMIN_PASSWORD=password
 
 # Copy configs
 COPY keycloak.conf /opt/keycloak/conf
 
 # Copy .jars with external providers
 WORKDIR /opt/keycloak/providers
-COPY *.jar .
-COPY amqpeventlistener/target/*.jar .
+ADD --chown=keycloak:keycloak *.jar .
+ADD --chown=keycloak:keycloak /target/*.jar .
+ADD --chown=keycloak:keycloak /src/main/resources/application.properties .
+WORKDIR /
 
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev"]
+EXPOSE 8080
+
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]

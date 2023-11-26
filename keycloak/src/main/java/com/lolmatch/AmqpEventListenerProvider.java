@@ -28,10 +28,10 @@ public class AmqpEventListenerProvider implements EventListenerProvider {
 	@Override
 	public void onEvent(Event event) {
 		try {
-			if ( event.getType() == EventType.REGISTER){
+			if (event.getType() == EventType.REGISTER) {
 				String id = event.getUserId();
-				String json = "{ \"id\":\""+id+"\"}";
-				channel.basicPublish("",queueName,null, json.getBytes());
+				String json = "{ \"id\":\"" + id + "\"}";
+				channel.basicPublish("", queueName, null, json.getBytes());
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -44,8 +44,8 @@ public class AmqpEventListenerProvider implements EventListenerProvider {
 			String id = adminEvent.getResourcePath().split("/")[1];
 			if (Objects.nonNull(id)) {
 				try {
-					String json = "{ \"id\":\""+id+"\"}";
-					channel.basicPublish("",queueName,null, json.getBytes());
+					String json = "{ \"id\":\"" + id + "\"}";
+					channel.basicPublish("", queueName, null, json.getBytes());
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}

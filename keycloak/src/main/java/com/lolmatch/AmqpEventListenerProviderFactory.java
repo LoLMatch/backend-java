@@ -10,7 +10,11 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
 public class AmqpEventListenerProviderFactory implements EventListenerProviderFactory {
@@ -18,7 +22,7 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 	ConnectionFactory connectionFactory;
 	Connection connection;
 	
-
+	Properties properties;
 	
 	@Override
 	public EventListenerProvider create(KeycloakSession keycloakSession) {
@@ -31,22 +35,33 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 	
 	@Override
 	public void init(Config.Scope scope) {
+		loadProperties();
+
 		connectionFactory = new ConnectionFactory();
-		connectionFactory.setHost("172.25.0.3");
-		connectionFactory.setPort(5672);
+		connectionFactory.setHost(properties.getProperty("amqp-hostname"));
+		connectionFactory.setPort(Integer.parseInt(properties.getProperty("amqp-port")));
+		connectionFactory.setUsername(properties.getProperty("amqp-username"));
+		connectionFactory.setPassword(properties.getProperty("amqp-password"));
 		try {
 			connection = connectionFactory.newConnection();
 		} catch (Exception e) {
-			System.out.println("EE");
 			System.out.println(e.getMessage());
-			System.out.println("DD");
 			System.out.println(Arrays.toString(e.getStackTrace()));
+		}
+	}
+	
+	public void loadProperties() {
+		File file = new File("opt/keycloak/providers/application.properties");
+		properties = new Properties();
+		try (InputStream resourceStream = new FileInputStream(file)) {
+			properties.load(resourceStream);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	@Override
 	public void postInit(KeycloakSessionFactory keycloakSessionFactory) {
-	
 	}
 	
 	@Override
