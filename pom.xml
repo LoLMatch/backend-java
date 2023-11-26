@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.lolmatch</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <keycloak.version>22.0.5</keycloak.version>
+        <rabbitmq.version>5.20.0</rabbitmq.version>
+        <compiler-plugin.version>3.11.0</compiler-plugin.version>
+    </properties>
+
+    
+     
+    <dependencyManagement>
+        <dependencies>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.3</version> <!-- Najnowsza wersja -->
+        </dependency>
+        <!-- Inne zależności -->
+    </dependencies>
+    </dependencyManagement>
+
+    <build>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>${compiler-plugin.version}</version>
+              <configuration>
+                  <source>1.8</source>
+                  <target>1.8</target>
+              </configuration>
+          </plugin>
+          <!-- Inne pluginy -->
+      </plugins>
+    </build>
+
+</project>
