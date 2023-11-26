@@ -1,27 +1,29 @@
 package com.lolmatch;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabbitmq.client.ConnectionFactory;
-import org.keycloak.Config;
 import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import org.jboss.logging.Logger;
+import org.keycloak.Config;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.concurrent.TimeoutException;
 
 public class AmqpEventListenerProviderFactory implements EventListenerProviderFactory {
 	
+	private static final Logger logger = Logger.getLogger(AmqpEventListenerProviderFactory.class.getName());
+	
 	ConnectionFactory connectionFactory;
 	Connection connection;
-	
 	Properties properties;
 	
 	@Override
@@ -29,6 +31,7 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 		try {
 			return new AmqpEventListenerProvider(connection);
 		} catch (IOException e) {
+			logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}
@@ -36,28 +39,27 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 	@Override
 	public void init(Config.Scope scope) {
 		loadProperties();
-
 		connectionFactory = new ConnectionFactory();
 		connectionFactory.setHost(properties.getProperty("amqp-hostname"));
 		connectionFactory.setPort(Integer.parseInt(properties.getProperty("amqp-port")));
 		connectionFactory.setUsername(properties.getProperty("amqp-username"));
 		connectionFactory.setPassword(properties.getProperty("amqp-password"));
+		logger.info("Initializing EventListenerFactory - properties: " + properties.toString());
 		try {
 			connection = connectionFactory.newConnection();
+			logger.info("Successfully connected to amqp broker with given properties");
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			System.out.println(Arrays.toString(e.getStackTrace()));
+			logger.error("Error while connecting to amqp broker");
+			logger.error(e.getMessage());
 		}
 	}
 	
 	public void loadProperties() {
-		File file = new File("opt/keycloak/providers/application.properties");
 		properties = new Properties();
-		try (InputStream resourceStream = new FileInputStream(file)) {
-			properties.load(resourceStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		properties.setProperty("amqp-hostname",System.getProperty("AMQP_HOSTNAME", "rabbitmq"));
+		properties.setProperty("amqp-port", System.getProperty("AMQP_PORT", "5672"));
+		properties.setProperty("amqp-username", System.getProperty("AMQP_USERNAME", "guest"));
+		properties.setProperty("amqp-password", System.getProperty("AMQP_PASSWORD", "guest"));
 	}
 	
 	@Override
@@ -69,7 +71,7 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 		try {
 			connection.close();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			logger.error(e.getMessage());
 		}
 	}
 	
