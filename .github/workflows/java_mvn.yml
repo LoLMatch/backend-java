@@ -36,3 +36,15 @@ jobs:
 
     - name: Run tests
       run: mvn test
+
+    - name: Build and test modules
+      run: |
+        modules=$(find . -name "pom.xml" -exec dirname {} \;)
+        for module in $modules; do
+          echo "Cleaning and installing for module: $module"
+          cd "$module"
+          mvn --batch-mode --update-snapshots --errors clean install
+          echo "Running tests for module: $module"
+          mvn --batch-mode --update-snapshots --errors test
+          cd -
+        done
