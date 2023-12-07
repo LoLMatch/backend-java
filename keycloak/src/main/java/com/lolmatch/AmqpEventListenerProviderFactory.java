@@ -9,13 +9,7 @@ import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Properties;
 
 public class AmqpEventListenerProviderFactory implements EventListenerProviderFactory {
@@ -28,6 +22,15 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 	
 	@Override
 	public EventListenerProvider create(KeycloakSession keycloakSession) {
+		if( connection == null){
+			try {
+				connection = connectionFactory.newConnection();
+			} catch ( Exception e){
+				logger.error("Connection was null, error while trying to reconnect to amqp broker");
+				logger.error("Connection properties: " + properties.toString());
+				logger.error(e.getMessage());
+			}
+		}
 		try {
 			return new AmqpEventListenerProvider(connection);
 		} catch (IOException e) {
