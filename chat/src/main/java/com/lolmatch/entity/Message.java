@@ -1,11 +1,15 @@
 package com.lolmatch.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "message")
 public class Message {
 	
@@ -17,22 +21,26 @@ public class Message {
 	@Column(name = "content", columnDefinition = "TEXT")
 	private String content;
 	
-	@Column(name = "created_at")
+	@Column(name = "created_at", nullable = false)
 	private Timestamp createdAt;
 	
 	@Column(name = "read_at")
 	private Timestamp readAt;
 	
-	@Column(name = "sender_id")
-	private UUID senderId;
+	@ManyToOne
+	@JoinColumn(name = "sender_id", nullable = false)
+	private User senderId;
 	
-	@Column(name = "receiver_id")
-	private UUID receiverId;
+	@ManyToOne
+	@JoinColumn(name = "receiver_id")
+	private User receiverId;
 	
-	@Column(name = "group_receiver_id")
-	private UUID groupReceiverId;
+	@ManyToOne
+	@JoinColumn(name = "group_receiver_id")
+	private Group groupReceiverId;
 	
-	@Column(name = "parent_message_id")
-	private UUID parentMessageId;
+	@OneToOne
+	@JoinColumn(name = "parent_message_id", referencedColumnName = "id")
+	private Message parentMessageId;
 	
 }
