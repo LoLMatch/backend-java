@@ -31,6 +31,6 @@ public class Group {
 	)
 	private Set<User> users;
 	
-	@OneToMany(mappedBy = "groupReceiverId")
+	@OneToMany(mappedBy = "groupRecipientId")
 	private Set<Message> groupMessages;
 }

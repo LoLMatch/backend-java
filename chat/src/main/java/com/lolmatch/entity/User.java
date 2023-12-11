@@ -20,8 +20,9 @@ public class User {
 	@GeneratedValue( strategy = GenerationType.UUID)
 	private UUID id;
 	
-	@Column(name = "username")
-	private String username;
+	//If possible, it's better to only keep id of user - it will be mapped to username in frontend.
+	//@Column(name = "username")
+	//private String username;
 	
 	@ManyToMany(mappedBy = "users")
 	private Set<Group> groups;
@@ -29,6 +30,6 @@ public class User {
 	@OneToMany(mappedBy = "senderId")
 	private Set<Message> sentMessages;
 	
-	@OneToMany(mappedBy = "receiverId")
+	@OneToMany(mappedBy = "recipientId")
 	private Set<Message> receivedMessages;
 }
