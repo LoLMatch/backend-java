@@ -32,12 +32,12 @@ public class Message {
 	private User senderId;
 	
 	@ManyToOne
-	@JoinColumn(name = "receiver_id")
-	private User receiverId;
+	@JoinColumn(name = "recipient_id")
+	private User recipientId;
 	
 	@ManyToOne
-	@JoinColumn(name = "group_receiver_id")
-	private Group groupReceiverId;
+	@JoinColumn(name = "group_recipient_id")
+	private Group groupRecipientId;
 	
 	@OneToOne
 	@JoinColumn(name = "parent_message_id", referencedColumnName = "id")
