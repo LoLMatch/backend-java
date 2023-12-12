@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
-@Builder
 @NoArgsConstructor
 public class IncomingMessageDTO {
 	
