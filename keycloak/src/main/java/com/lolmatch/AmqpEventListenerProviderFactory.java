@@ -32,7 +32,7 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 			}
 		}
 		try {
-			return new AmqpEventListenerProvider(connection);
+			return new AmqpEventListenerProvider(connection, keycloakSession);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			throw new RuntimeException(e);
