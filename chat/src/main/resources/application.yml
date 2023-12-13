@@ -14,3 +14,6 @@ spring:
                 default_schema: public
         database: postgresql
         database-platform: org.hibernate.dialect.PostgreSQLDialect
+    jackson:
+        deserialization:
+          fail-on-unknown-properties: false
