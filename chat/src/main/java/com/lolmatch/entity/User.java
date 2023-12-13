@@ -19,10 +19,9 @@ public class User {
 	@Column(name = "id")
 	@GeneratedValue( strategy = GenerationType.UUID)
 	private UUID id;
-	
-	//If possible, it's better to only keep id of user - it will be mapped to username in frontend.
-	//@Column(name = "username")
-	//private String username;
+
+	@Column(name = "username")
+	private String username;
 	
 	@ManyToMany(mappedBy = "users")
 	private Set<Group> groups;

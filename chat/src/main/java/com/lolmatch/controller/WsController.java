@@ -1,8 +1,10 @@
 package com.lolmatch.controller;
 
 import com.lolmatch.dto.IncomingMessageDTO;
+import com.lolmatch.dto.MessageDTO;
 import com.lolmatch.dto.TestDTO;
 import com.lolmatch.service.MessageService;
+import com.lolmatch.service.UserService;
 import com.lolmatch.util.ActionTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.Header;
@@ -22,22 +24,21 @@ public class WsController {
 	
 	private final MessageService messageService;
 	
+	private final UserService userService;
+	
 	private final SimpMessagingTemplate messagingTemplate;
 	
-	private final SimpUserRegistry userRegistry;
-	
 	@MessageMapping("/chat")
-
-	public void processMessage(@Payload TestDTO messageDTO, @Header("simpSessionId") String sessionId) {
-		//if( messageDTO.getType() == ActionTypeEnum.SEND){
+	public void processMessage(@Payload IncomingMessageDTO message) {
+		if( message.getType() == ActionTypeEnum.SEND){
 			// TODO - save message in db then try to send it to recipient
-			//messageService.saveMessage(messageDTO);
-		//} else if ( messageDTO.getType() == ActionTypeEnum.MARK_READ){
-			// TODO - set all messages with given users before given timestamp as read
-			//messageService.setMessageRead(messageDTO);
-		//}
-		// TODO - get recipientId from messageDTO and send message to this session
-		messagingTemplate.convertAndSendToUser( "user","/topic/chat" , messageDTO);
+			MessageDTO outgoingMessage = messageService.saveMessage(message);
+			String recipientUsername = userService.getUsernameByUUID(message.getRecipientId());
+			messagingTemplate.convertAndSendToUser(recipientUsername, "/topic/chat", outgoingMessage);
+		} else if ( message.getType() == ActionTypeEnum.MARK_READ){
+			// TODO - set all messages with given user and before given timestamp as read
+			messageService.setMessageRead(message);
+		}
 	}
 
 }

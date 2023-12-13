@@ -2,6 +2,7 @@ package com.lolmatch.service;
 
 import com.lolmatch.dto.FetchMessagesDTO;
 import com.lolmatch.dto.IncomingMessageDTO;
+import com.lolmatch.dto.MessageDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,8 +14,8 @@ public class MessageService {
 		return null;
 	}
 	
-	public void saveMessage(IncomingMessageDTO messageDTO) {
-	
+	public MessageDTO saveMessage(IncomingMessageDTO incomingMessage) {
+		return null;
 	}
 	
 	public void setMessageRead(IncomingMessageDTO messageDTO) {

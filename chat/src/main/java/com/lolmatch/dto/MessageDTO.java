@@ -1,5 +1,6 @@
 package com.lolmatch.dto;
 
+import lombok.Builder;
 import lombok.Value;
 
 import java.io.Serializable;
