@@ -2,22 +2,18 @@ package com.lolmatch.controller;
 
 import com.lolmatch.dto.IncomingMessageDTO;
 import com.lolmatch.dto.MessageDTO;
-import com.lolmatch.dto.TestDTO;
 import com.lolmatch.service.MessageService;
 import com.lolmatch.service.UserService;
 import com.lolmatch.util.ActionTypeEnum;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.Header;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.messaging.simp.user.SimpUser;
-import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Controller;
 
-import java.security.Principal;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class WsController {
@@ -30,6 +26,7 @@ public class WsController {
 	
 	@MessageMapping("/chat")
 	public void processMessage(@Payload IncomingMessageDTO message) {
+		log.info("Incoming message on channel /app/chat, details: "  + message.toString());
 		if( message.getType() == ActionTypeEnum.SEND){
 			// TODO - save message in db then try to send it to recipient
 			MessageDTO outgoingMessage = messageService.saveMessage(message);
@@ -38,6 +35,9 @@ public class WsController {
 		} else if ( message.getType() == ActionTypeEnum.MARK_READ){
 			// TODO - set all messages with given user and before given timestamp as read
 			messageService.setMessageRead(message);
+		} else {
+			log.error("Wrong action type on incoming message: " + message.toString());
+			throw new IllegalStateException("Wrong action type on incoming message - " + message.getType());
 		}
 	}
 
