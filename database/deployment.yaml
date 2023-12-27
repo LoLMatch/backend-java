@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: backend-java-postgres
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "user"
+            - name: POSTGRES_PASSWORD
+              value: "userpassword"
+            - name: KEYCLOAK_DB
+              value: "keycloak"
+            - name: KEYCLOAK_USER
+              value: "keycloak"
+            - name: KEYCLOAK_PASSWORD
+              value: "keycloakpassword"
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
