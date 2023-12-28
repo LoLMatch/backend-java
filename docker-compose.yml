@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+      args:
+        - KEYCLOAK_USER=keycloak
+        - KEYCLOAK_DB=keycloak
+        - KEYCLOAK_PASSWORD=keycloak_password
+        - POSTGRES_USER=user
+        - POSTGRES_PASSWORD=userpassword
+    ports:
+      - "5432:5432"
