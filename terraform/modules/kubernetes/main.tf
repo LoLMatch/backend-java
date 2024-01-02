@@ -1,10 +1,10 @@
 variable "project_id" {}
 variable "location" {}
 variable "cluster_name" {}
-variable "creds_path" {}
+variable "credentials" {}
 
 provider "google" {
-  credentials = file(var.creds_path)
+  credentials = var.credentials
   project     = var.project_id
   region      = var.location
 }

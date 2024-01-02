@@ -23,7 +23,6 @@ variable "machine_type" {
   default     = "e2-small"
 }
 
-variable "creds_path" {
+variable "credentials" {
   description = "The path to the GCP credentials file."
-  default     = "../../credentials.json"
 }
