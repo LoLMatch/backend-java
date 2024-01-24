@@ -1,0 +1,31 @@
+name: Deploy infrastructure on GCP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Terraform fmt
+      run: terraform fmt -check
+      continue-on-error: true
+    
+    - name: Terraform init
+      uses: hashicorp/setup-terraform@v3
+      with:
+        cli_config_credentials_token: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Terraform plan
+      run: terraform plan
+
+    - name: Terraform apply
+      run: terraform apply -auto-approve
+
+
+
+
