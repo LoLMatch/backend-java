@@ -6,6 +6,7 @@ variable "project_id" {
 
 variable "location" {
   description = "The location (region or zone) for the cluster."
+  default     = "europe-central2"
 }
 
 variable "cluster_name" {
@@ -21,8 +22,4 @@ variable "node_count" {
 variable "machine_type" {
   description = "The machine type for the cluster nodes."
   default     = "e2-small"
-}
-
-variable "credentials" {
-  description = "The path to the GCP credentials file."
 }

@@ -30,4 +30,4 @@ jobs:
 
       - name: Push Docker images to Artifact Registry
         run: |
-          docker-compose push gcr.io/${{ secrets.GCP_PROJECT_ID}}/backend-java
+          docker-compose push gcr.io/${{ secrets.GCP_PROJECT_ID }}/backend-java

@@ -1,12 +1,10 @@
 variable "project_id" {}
 variable "location" {}
 variable "cluster_name" {}
-variable "credentials" {}
 
 provider "google" {
-  credentials = var.credentials
-  project     = var.project_id
-  region      = var.location
+  project = var.project_id
+  region  = var.location
 }
 
 resource "google_container_cluster" "primary" {
