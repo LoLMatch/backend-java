@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  db:
+    image: "postgres:latest"
+    container_name: "database"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=keycloak
+    ports:
+      - "5432:5432"
+    networks:
+      - network
+    healthcheck:
+      test: "pg_isready -U postgres"
+
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: "rabbitmq"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - network
+    healthcheck:
+      test: "rabbitmq-diagnostics -q ping"
+
+  keycloak:
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
+    container_name: "keycloak"
+    ports:
+      - "8443:8443"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev # extra logs + docker settings -> application-dev.properties
+    ports:
+      - '8080:8080'
+    networks:
+      - network
+    depends_on:
+      - keycloak
+
+networks:
+  network:
+    driver: bridge
+
