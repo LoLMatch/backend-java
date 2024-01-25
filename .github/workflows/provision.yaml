@@ -20,7 +20,9 @@ jobs:
       uses: hashicorp/setup-terraform@v3
 
     - name: Terraform init
-      run: terraform init
+      run: |
+        cd terraform/environments/development
+        terraform init
         
     - name: Terraform fmt
       run: terraform fmt -check

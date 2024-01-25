@@ -17,6 +17,7 @@ jobs:
 
       - name: Build and push Docker images
         run: |
+          apt-get update && apt-get install -y docker-compose
           docker-compose build
 
       - name: 'Authenticate with Google Cloud'

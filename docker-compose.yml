@@ -31,8 +31,8 @@ services:
 
   keycloak:
     build:
-      context: ./keycloak
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: keycloak/Dockerfile
     container_name: "keycloak"
     ports:
       - "8443:8443"
@@ -46,8 +46,8 @@ services:
 
   api-gateway:
     build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
     environment:
       - SPRING_PROFILES_ACTIVE=dev # extra logs + docker settings -> application-dev.properties
