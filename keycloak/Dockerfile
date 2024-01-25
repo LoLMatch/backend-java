@@ -40,9 +40,7 @@ ENV KC_HTTP_PORT=8443
 # Add providers
 WORKDIR /opt/keycloak/providers
 
-COPY --from=build /app/keycloak/target/*.jar .
-RUN ls -la && pwd
-ADD --chown=keycloak:keycloak *.jar .
+COPY --from=build --chown=keycloak:keycloak /app/keycloak/target/*.jar .
 
 WORKDIR /opt/keycloak
 RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
