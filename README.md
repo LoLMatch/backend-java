@@ -14,9 +14,8 @@
 ```
 
 ## Uruchomienie testowe
-Pozwala na uruchomienie wszystkich części poprzez docker-compose. Najpierw kompilacja:
+Pozwala na uruchomienie wszystkich części poprzez docker-compose. 
 ```bash
-mvn clean install
 docker-compose up --build
 ```
 ### Ważne uwagi
