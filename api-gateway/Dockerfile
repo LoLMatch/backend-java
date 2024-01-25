@@ -2,11 +2,12 @@ FROM maven:3.8.4-openjdk-17 as build
 
 WORKDIR /app
 
-COPY ./api-gateway/pom.xml ./api-gateway/pom.xml
-COPY ./api-gateway/src ./api-gateway/src
+COPY ./api-gateway/pom.xml /app/api-gateway/pom.xml
+COPY ./api-gateway/src /app/api-gateway/src
 
-RUN mvn -f ./api-gateway/pom.xml clean package
+COPY ./pom.xml /app/pom.xml
 
+RUN mvn -f /app/api-gateway/pom.xml clean install
 
 FROM openjdk:17
 
