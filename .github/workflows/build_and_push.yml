@@ -32,6 +32,6 @@ jobs:
       - name: Push Docker images to Artifact Registry
         run: |
           for service in $(docker image ls --format "{{.Repository}}"); do
-            docker tag $service europe-central2-docker.pkg.dev/$GCP_PROJECT_ID/$service
+            docker tag $service europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$service
             docker push europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$service
           done    
