@@ -47,5 +47,5 @@ RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysi
 
 WORKDIR /
 
-COPY ./keycloak/realm.json /app/keycloak/realm.json
+COPY ./keycloak/realm.json /opt/keycloak/data/import/realm.json
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm"]
