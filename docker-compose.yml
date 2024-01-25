@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: "postgres:latest"
+    image: postgres:latest
     container_name: "database"
     environment:
       - POSTGRES_USER=postgres
