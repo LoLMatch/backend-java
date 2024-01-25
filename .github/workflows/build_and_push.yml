@@ -27,8 +27,11 @@ jobs:
 
       - name: Configure Docker credentials
         run: |
-          gcloud auth configure-docker
+          gcloud auth configure-docker europe-central2-docker.pkg.dev --quiet
 
       - name: Push Docker images to Artifact Registry
         run: |
-          docker-compose push gcr.io/${{ secrets.GCP_PROJECT_ID }}/backend-java
+          for service in $(docker image ls -q); do                                                                                                                                                                                                               ✭ ✱
+            docker tag $service europe-central2-docker.pkg.dev/$GCP_PROJECT_ID/$service
+            docker push europe-central2-docker.pkg.dev/$GCP_PROJECT_ID/$service
+          done    
