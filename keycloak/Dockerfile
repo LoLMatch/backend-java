@@ -6,8 +6,8 @@ COPY ./pom.xml /app/pom.xml
 COPY ./keycloak/pom.xml /app/keycloak/pom.xml
 COPY ./keycloak/src /app/keycloak/src
 
-
 RUN mvn -f /app/keycloak/pom.xml clean install
+
 RUN ls -la /app/keycloak/target
 
 FROM keycloak/keycloak:23.0.4
@@ -41,6 +41,8 @@ ENV KC_HTTP_PORT=8443
 WORKDIR /opt/keycloak/providers
 
 COPY --from=build --chown=keycloak:keycloak /app/keycloak/target/*.jar .
+# Ponizsze jest do zmiany, bo .jar powinien byc wynikiem builda
+COPY --chown=keycloak:keycloak /keycloak/*.jar  .
 
 WORKDIR /opt/keycloak
 RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
