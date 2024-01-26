@@ -31,8 +31,10 @@ jobs:
 
       - name: Push Docker images to Artifact Registry
         run: |
-          for service in $(docker image ls --format "{{.Repository}}"); do
-            echo "Pushing $service to Artifact Registry"
-            docker tag $service europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend-java/$service
-            docker push europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend-java/$service
+          for service in $(docker image ls --format "{{.Repository}}:{{.Tag}}"); do
+            if [[ $service == *"lolmatch"* ]]; then
+              echo "Pushing $service to Artifact Registry"
+              docker tag $service europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend-java/$service
+              docker push europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend-java/$service
+            fi
           done    

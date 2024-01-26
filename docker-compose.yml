@@ -4,8 +4,8 @@ services:
   db:
     build:
       context: .
-      dockerfile: postgres/Dockerfile
-    image: postgres:development
+      dockerfile: database/Dockerfile
+    image: postgres:lolmatch
     container_name: "database"
     environment:
       - POSTGRES_USER=postgres
@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: rabbitmq/Dockerfile
     container_name: "rabbitmq"
-    image: rabbitmq:development
+    image: rabbitmq:lolmatch
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -40,7 +40,7 @@ services:
       context: .
       dockerfile: keycloak/Dockerfile
     container_name: "keycloak"
-    image: keycloak:development
+    image: keycloak:lolmatch
     ports:
       - "8443:8443"
     depends_on:
@@ -56,7 +56,7 @@ services:
       context: .
       dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
-    image: api-gateway:development
+    image: api-gateway:lolmatch
     environment:
       - SPRING_PROFILES_ACTIVE=dev # extra logs + docker settings -> application-dev.properties
     ports:
