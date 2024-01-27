@@ -62,14 +62,7 @@
                 </configuration>
             </plugin>
             <!-- Inne pluginy -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.lolmatch.apigateway.ApiGatewayApplication</mainClass>
-                    <layout>JAR</layout>
-                </configuration>
-            </plugin>
+
         </plugins>
     </build>
 
