@@ -1,6 +1,6 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/chat
+        url: jdbc:postgresql://database:5432/keycloak
         username: postgres
         password: postgres
         driver-class-name: org.postgresql.Driver
@@ -17,3 +17,12 @@ spring:
     jackson:
         deserialization:
           fail-on-unknown-properties: false
+    security:
+      oauth2:
+        resourceserver:
+          jwt:
+              issuer-uri: http://keycloak:8443/realms/lolmatch
+    rabbitmq:
+        addresses: rabbitmq
+        username: guest
+        password: guest

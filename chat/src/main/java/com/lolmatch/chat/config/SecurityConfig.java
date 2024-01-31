@@ -1,4 +1,4 @@
-package com.lolmatch.config;
+package com.lolmatch.chat.config;
 
 
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,9 @@ public class SecurityConfig {
 				.authorizeHttpRequests((requests) -> requests
 						.anyRequest().permitAll()
 				)
-				.httpBasic(Customizer.withDefaults())
+				.oauth2ResourceServer((oauth2) -> oauth2
+						.jwt(Customizer.withDefaults())
+				)
 				.csrf(AbstractHttpConfigurer::disable);
 			
 		// TODO - tutaj trzeba poprawnie skonfigurować security - dopiąć oauth z keycloaka oraz ustawić odpowiednie dostępy

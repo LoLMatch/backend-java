@@ -1,4 +1,4 @@
-package com.lolmatch.entity;
+package com.lolmatch.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +9,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "message")
 public class Message {
 	
@@ -29,11 +31,11 @@ public class Message {
 	
 	@ManyToOne
 	@JoinColumn(name = "sender_id", nullable = false)
-	private User senderId;
+	private User sender;
 	
 	@ManyToOne
 	@JoinColumn(name = "recipient_id")
-	private User recipientId;
+	private User recipient;
 	
 	@ManyToOne
 	@JoinColumn(name = "group_recipient_id")
@@ -41,6 +43,6 @@ public class Message {
 	
 	@OneToOne
 	@JoinColumn(name = "parent_message_id", referencedColumnName = "id")
-	private Message parentMessageId;
+	private Message parentMessage;
 	
 }

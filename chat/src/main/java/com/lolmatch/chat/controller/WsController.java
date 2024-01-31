@@ -1,10 +1,10 @@
-package com.lolmatch.controller;
+package com.lolmatch.chat.controller;
 
-import com.lolmatch.dto.IncomingMessageDTO;
-import com.lolmatch.dto.MessageDTO;
-import com.lolmatch.service.MessageService;
-import com.lolmatch.service.UserService;
-import com.lolmatch.util.ActionTypeEnum;
+import com.lolmatch.chat.dto.IncomingMessageDTO;
+import com.lolmatch.chat.dto.MessageDTO;
+import com.lolmatch.chat.service.MessageService;
+import com.lolmatch.chat.service.UserService;
+import com.lolmatch.chat.util.ActionTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,8 +30,8 @@ public class WsController {
 		if( message.getType() == ActionTypeEnum.SEND){
 			// TODO - save message in db then try to send it to recipient
 			MessageDTO outgoingMessage = messageService.saveMessage(message);
-			String recipientUsername = userService.getUsernameByUUID(message.getRecipientId());
-			messagingTemplate.convertAndSendToUser(recipientUsername, "/topic/chat", outgoingMessage);
+			//String recipientUsername = userService.getUsernameByUUID(message.getRecipientId());
+			messagingTemplate.convertAndSendToUser(String.valueOf(outgoingMessage.getRecipientId()), "/topic/chat", outgoingMessage);
 		} else if ( message.getType() == ActionTypeEnum.MARK_READ){
 			// TODO - set all messages with given user and before given timestamp as read
 			messageService.setMessageRead(message);

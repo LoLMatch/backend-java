@@ -1,7 +1,7 @@
-package com.lolmatch.controller;
+package com.lolmatch.chat.controller;
 
-import com.lolmatch.dto.FetchMessagesDTO;
-import com.lolmatch.service.MessageService;
+import com.lolmatch.chat.dto.FetchMessagesDTO;
+import com.lolmatch.chat.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

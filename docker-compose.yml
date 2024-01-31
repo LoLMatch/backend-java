@@ -66,6 +66,21 @@ services:
     depends_on:
       - keycloak
 
+  chat-service:
+    build:
+      context: .
+      dockerfile: chat/Dockerfile
+    container_name: "chat-service"
+    image: chat-service:lolmatch
+    ports:
+      - '8081:8080'
+    networks:
+      - network
+    depends_on:
+      - keycloak
+      - db
+      - rabbitmq
+
 networks:
   network:
     driver: bridge

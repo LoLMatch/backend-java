@@ -1,7 +1,6 @@
-package com.lolmatch.dto;
+package com.lolmatch.chat.dto;
 
-import com.lolmatch.util.ActionTypeEnum;
-import lombok.Builder;
+import com.lolmatch.chat.util.ActionTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

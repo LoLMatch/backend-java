@@ -24,11 +24,13 @@
         <keycloak.version>22.0.5</keycloak.version>
         <rabbitmq.version>5.20.0</rabbitmq.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
+        <spring.version>3.2.1</spring.version>
     </properties>
 
     <modules>
         <module>api-gateway</module>
         <module>keycloak</module>
+        <module>chat</module>
     </modules>
 
     <dependencyManagement>

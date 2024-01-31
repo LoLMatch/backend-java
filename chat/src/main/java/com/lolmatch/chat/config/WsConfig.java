@@ -1,6 +1,6 @@
-package com.lolmatch.config;
+package com.lolmatch.chat.config;
 
-import com.lolmatch.util.TestChannelInterceptor;
+import com.lolmatch.chat.util.TestChannelInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

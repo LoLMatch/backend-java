@@ -9,7 +9,7 @@ COPY ./pom.xml /app/pom.xml
 
 RUN mvn -f /app/api-gateway/pom.xml clean install
 
-FROM openjdk:17
+FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 

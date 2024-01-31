@@ -1,7 +1,6 @@
-package com.lolmatch.dto;
+package com.lolmatch.chat.dto;
 
-import com.lolmatch.entity.Message;
-import lombok.Builder;
+import com.lolmatch.chat.entity.Message;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

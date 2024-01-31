@@ -1,7 +1,8 @@
-package com.lolmatch.config;
+package com.lolmatch.chat.config;
 
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 
@@ -11,7 +12,9 @@ public class WsSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConf
 	@Override
 	protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
 		messages
-				.simpDestMatchers("/user/**").authenticated();
+				.simpTypeMatchers(SimpMessageType.CONNECT,
+						SimpMessageType.DISCONNECT, SimpMessageType.OTHER).permitAll()
+				.anyMessage().authenticated();
 		// TODO - skonfigurować to w odpowiedni sposób
 	}
 	

@@ -1,4 +1,4 @@
-package com.lolmatch.entity;
+package com.lolmatch.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,7 +17,6 @@ public class User {
 	
 	@Id
 	@Column(name = "id")
-	@GeneratedValue( strategy = GenerationType.UUID)
 	private UUID id;
 
 	@Column(name = "username")
@@ -26,9 +25,9 @@ public class User {
 	@ManyToMany(mappedBy = "users")
 	private Set<Group> groups;
 	
-	@OneToMany(mappedBy = "senderId")
+	@OneToMany(mappedBy = "sender")
 	private Set<Message> sentMessages;
 	
-	@OneToMany(mappedBy = "recipientId")
+	@OneToMany(mappedBy = "recipient")
 	private Set<Message> receivedMessages;
 }

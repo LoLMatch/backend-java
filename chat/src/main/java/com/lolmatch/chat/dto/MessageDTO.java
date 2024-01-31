@@ -1,4 +1,4 @@
-package com.lolmatch.dto;
+package com.lolmatch.chat.dto;
 
 import lombok.Builder;
 import lombok.Value;
@@ -9,12 +9,13 @@ import java.util.UUID;
 
 
 @Value
+@Builder
 public class MessageDTO implements Serializable {
 	UUID id;
 	String content;
 	Timestamp createdAt;
 	Timestamp readAt;
-	UUID senderIdId;
-	UUID recipientIdId;
-	UUID parentMessageIdId;
+	UUID senderId;
+	UUID recipientId;
+	UUID parentMessageId;
 }

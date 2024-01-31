@@ -1,5 +1,19 @@
+FROM maven:3.8.4-openjdk-17 as build
+
+WORKDIR /app
+
+COPY ./pom.xml /app/pom.xml
+COPY ./chat/pom.xml /app/chat/pom.xml
+COPY ./chat/src /app/chat/src
+
+RUN mvn -f /app/chat/pom.xml clean install
+
+RUN ls -la /app/chat/target
+
 FROM eclipse-temurin:17-jdk-alpine
-VOLUME /tmp
-ARG JAR_FILE
-COPY target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+WORKDIR /app
+
+COPY --from=build /app/chat/target/*.jar app.jar
+
+ENTRYPOINT ["java","-jar","app.jar"]

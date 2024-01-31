@@ -1,4 +1,4 @@
-package com.lolmatch.util;
+package com.lolmatch.chat.util;
 
 public enum ActionTypeEnum {
 	SEND,

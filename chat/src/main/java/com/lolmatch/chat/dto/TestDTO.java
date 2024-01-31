@@ -1,4 +1,4 @@
-package com.lolmatch.dto;
+package com.lolmatch.chat.dto;
 
 import lombok.Builder;
 import lombok.Data;

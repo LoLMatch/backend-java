@@ -1,4 +1,4 @@
-package com.lolmatch.util;
+package com.lolmatch.chat.util;
 
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;

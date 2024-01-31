@@ -1,4 +1,4 @@
-package com.lolmatch.entity;
+package com.lolmatch.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.lolmatch;
+package com.lolmatch.keycloak;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -22,17 +22,8 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 	
 	@Override
 	public EventListenerProvider create(KeycloakSession keycloakSession) {
-		if( connection == null){
-			try {
-				connection = connectionFactory.newConnection();
-			} catch ( Exception e){
-				logger.error("Connection was null, error while trying to reconnect to amqp broker");
-				logger.error("Connection properties: " + properties.toString());
-				logger.error(e.getMessage());
-			}
-		}
 		try {
-			return new AmqpEventListenerProvider(connection, keycloakSession);
+			return new AmqpEventListenerProvider(connection);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			throw new RuntimeException(e);
