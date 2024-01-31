@@ -1,6 +1,7 @@
 package com.lolmatch.chat.service;
 
 import com.lolmatch.chat.dao.UserRepository;
+import com.lolmatch.chat.dto.UserDTO;
 import com.lolmatch.chat.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,13 @@ public class UserService {
 		} else {
 			return user.get();
 		}
+	}
+	
+	public User saveUserFromDTO(UserDTO userDTO){
+		User user = new User();
+		user.setId(userDTO.getId());
+		user.setUsername(userDTO.getUsername());
+		
+		return userRepository.save(user);
 	}
 }
