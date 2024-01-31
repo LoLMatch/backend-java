@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 com.lolmatch.keycloak.AmqpEventListenerProviderFactory
-=======
-com.lolmatch.AmqpEventListenerProviderFactory
->>>>>>> 512ebb94dfc318f977afc3096c28191784577fec

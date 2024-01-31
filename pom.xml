@@ -3,7 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<<<<<<< HEAD
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -11,38 +10,25 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-=======
->>>>>>> 512ebb94dfc318f977afc3096c28191784577fec
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lolmatch</groupId>
     <artifactId>parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-<<<<<<< HEAD
 
     <properties>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
-=======
-    <modules>
-        <module>chat</module>
-    </modules>
-
-    <properties>
->>>>>>> 512ebb94dfc318f977afc3096c28191784577fec
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <keycloak.version>22.0.5</keycloak.version>
         <rabbitmq.version>5.20.0</rabbitmq.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
-<<<<<<< HEAD
-        <spring.version>3.2.1</spring.version>
     </properties>
 
     <modules>
         <module>api-gateway</module>
         <module>keycloak</module>
-        <module>chat</module>
     </modules>
 
     <dependencyManagement>
@@ -81,56 +67,3 @@
     </build>
 
 </project>
-=======
-        <spring.version>3.2.0</spring.version>
-        <slf4j.version>2.0.9</slf4j.version>
-        <postgres.version>42.6.0</postgres.version>
-        <lombok.version>1.18.30</lombok.version>
-    </properties>
-
-    
-     
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler-plugin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-bom</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>6.2.0</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <version>${compiler-plugin.version}</version>
-              <configuration>
-                  <source>1.8</source>
-                  <target>1.8</target>
-              </configuration>
-          </plugin>
-      </plugins>
-    </build>
-
-</project>
->>>>>>> 512ebb94dfc318f977afc3096c28191784577fec
