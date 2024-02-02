@@ -10,7 +10,6 @@ spring:
             ddl-auto: create-drop
         properties:
             hibernate:
-                format_sql: true
                 default_schema: public
         database: postgresql
         database-platform: org.hibernate.dialect.PostgreSQLDialect

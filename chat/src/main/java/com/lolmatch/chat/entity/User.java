@@ -1,5 +1,6 @@
 package com.lolmatch.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,12 +23,16 @@ public class User {
 	@Column(name = "username")
 	private String username;
 	
-	@ManyToMany(mappedBy = "users")
+	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
 	private Set<Group> groups;
 	
-	@OneToMany(mappedBy = "sender")
+	@JsonBackReference
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private Set<Contact> contacts;
+	
+	@OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
 	private Set<Message> sentMessages;
 	
-	@OneToMany(mappedBy = "recipient")
+	@OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
 	private Set<Message> receivedMessages;
 }
