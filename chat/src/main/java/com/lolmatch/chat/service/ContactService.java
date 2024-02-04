@@ -26,12 +26,6 @@ public class ContactService {
 		
 		ContactDTO dto = new ContactDTO();
 		dto.setUser(user);
-		/*
-		List<ContactDTO.Contact> contacts = new ArrayList<>();
-		for ( Contact contact: contactsFromDb) {
-			contacts.add(new ContactDTO.Contact(contact.getId(), contact.getContactUsername()));
-		}
-		*/
 		List<ContactDTO.Contact> contacts = contactsFromDb.stream().map(contact -> new ContactDTO.Contact(contact.getContactId(), contact.getContactUsername())).collect(Collectors.toList());
 		dto.setContacts(contacts);
 		

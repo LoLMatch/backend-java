@@ -1,5 +1,6 @@
 package com.lolmatch.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,10 +31,12 @@ public class Message {
 	private Timestamp readAt;
 	
 	@ManyToOne
+	@JsonManagedReference
 	@JoinColumn(name = "sender_id", nullable = false)
 	private User sender;
 	
 	@ManyToOne
+	@JsonManagedReference
 	@JoinColumn(name = "recipient_id")
 	private User recipient;
 	

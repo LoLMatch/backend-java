@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lolmatch.chat.dto.UserDTO;
 import com.lolmatch.chat.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.amqp.core.Queue;
 
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AmqpUserRegisterQueueReceiver {
@@ -26,8 +27,7 @@ public class AmqpUserRegisterQueueReceiver {
 	
 	@RabbitListener(queues = queueName)
 	public void listen(String in) throws JsonProcessingException {
-		// TODO - change println to proper logging
-		System.out.println("Message read from myQueue : " + in);
+		log.info("Message from user-register-queue: " + in);
 		ObjectMapper objectMapper = new ObjectMapper();
 		UserDTO userDTO = objectMapper.readValue(in, UserDTO.class);
 		

@@ -30,9 +30,11 @@ public class User {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private Set<Contact> contacts;
 	
+	@JsonBackReference
 	@OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
 	private Set<Message> sentMessages;
 	
+	@JsonBackReference
 	@OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
 	private Set<Message> receivedMessages;
 }

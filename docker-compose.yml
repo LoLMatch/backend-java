@@ -50,6 +50,8 @@ services:
         condition: service_healthy
     networks:
       - network
+    healthcheck:
+      test: ["CMD-SHELL", "echo -n > /dev/tcp/127.0.0.1/8443"]
 
   api-gateway:
     build:
@@ -77,9 +79,12 @@ services:
     networks:
       - network
     depends_on:
-      - keycloak
-      - db
-      - rabbitmq
+      keycloak:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
 networks:
   network:

@@ -12,8 +12,8 @@ public class WsSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConf
 	@Override
 	protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
 		messages
-				.simpTypeMatchers(SimpMessageType.CONNECT,
-						SimpMessageType.DISCONNECT, SimpMessageType.OTHER).permitAll()
+				.simpTypeMatchers(SimpMessageType.CONNECT).permitAll()
+				.nullDestMatcher().authenticated()
 				.anyMessage().authenticated();
 		// TODO - skonfigurować to w odpowiedni sposób
 	}
