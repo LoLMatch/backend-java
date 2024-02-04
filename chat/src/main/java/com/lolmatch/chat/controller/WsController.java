@@ -31,7 +31,8 @@ public class WsController {
 			// TODO - save message in db then try to send it to recipient
 			MessageDTO outgoingMessage = messageService.saveMessage(message);
 			//String recipientUsername = userService.getUsernameByUUID(message.getRecipientId());
-			messagingTemplate.convertAndSendToUser(String.valueOf(outgoingMessage.getRecipientId()), "/topic/chat", outgoingMessage);
+			//messagingTemplate.convertAndSendToUser(String.valueOf(outgoingMessage.getRecipientId()), "/topic/chat", outgoingMessage);
+			messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getRecipientId()), outgoingMessage);
 		} else if ( message.getType() == ActionTypeEnum.MARK_READ){
 			// TODO - set all messages with given user and before given timestamp as read
 			messageService.setMessageRead(message);
