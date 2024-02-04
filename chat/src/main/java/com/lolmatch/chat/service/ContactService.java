@@ -1,6 +1,7 @@
 package com.lolmatch.chat.service;
 
 import com.lolmatch.chat.dao.ContactRepository;
+import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dto.ContactDTO;
 import com.lolmatch.chat.entity.Contact;
 import com.lolmatch.chat.entity.User;
@@ -20,15 +21,22 @@ public class ContactService {
 	
 	private final UserService userService;
 	
+	private final MessageRepository messageRepository;
+	
 	public ContactDTO getContactListForUser(UUID id){
 		User user = userService.getUserByUUID(id);
 		List<Contact> contactsFromDb = contactRepository.findAllByUser(user);
 		
 		ContactDTO dto = new ContactDTO();
 		dto.setUser(user);
-		List<ContactDTO.Contact> contacts = contactsFromDb.stream().map(contact -> new ContactDTO.Contact(contact.getContactId(), contact.getContactUsername())).collect(Collectors.toList());
+		List<ContactDTO.Contact> contacts = contactsFromDb.stream().map(contact -> new ContactDTO.Contact(contact.getContactId(), contact.getContactUsername(), countMessagesBetweenUsers(user, contact.getContactId()))).collect(Collectors.toList());
 		dto.setContacts(contacts);
 		
 		return dto;
+	}
+	
+	private int countMessagesBetweenUsers(User user, UUID contactId){
+		User contact = userService.getUserByUUID(contactId);
+		return messageRepository.countAllBySenderAndRecipientAndReadAtIsNull(contact, user);
 	}
 }

@@ -30,29 +30,7 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 			
-		// TODO - tutaj trzeba poprawnie skonfigurować security - dopiąć oauth z keycloaka oraz ustawić odpowiednie dostępy
 		return http.build();
 	}
-	
-	/*@Bean
-	public UserDetailsService userDetailsService() {
-		UserDetails user =
-				User.withDefaultPasswordEncoder()
-						.username("user")
-						.password("password")
-						.roles("USER")
-						.build();
-		UserDetails secondUser =
-				User.withDefaultPasswordEncoder()
-						.username("user1")
-						.password("password1")
-						.roles("USER")
-						.build();
-		*//* FIXME -
-		    to jest chwilowa implementacja żeby można było sobie testować
-			finalnie będziemy korzystać z OIDC do zdobywania info o userach.
-		 *//*
-		return new InMemoryUserDetailsManager(user, secondUser);
-	}*/
 }
 

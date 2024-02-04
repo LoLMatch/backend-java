@@ -5,13 +5,16 @@ import com.lolmatch.chat.dto.FetchMessagesDTO;
 import com.lolmatch.chat.dto.IncomingMessageDTO;
 import com.lolmatch.chat.dto.MessageDTO;
 import com.lolmatch.chat.entity.Message;
+import com.lolmatch.chat.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class MessageService {
 	private final UserService userService;
 	
 	public FetchMessagesDTO getListOfMessages(UUID senderId, UUID recipientId, Optional<Integer> size) {
+		// TODO - to be implemented
 		return null;
 	}
 	
@@ -41,7 +45,18 @@ public class MessageService {
 	}
 	
 	public void setMessageRead(IncomingMessageDTO messageDTO) {
-	
+		User sender = userService.getUserByUUID(messageDTO.getSenderId());
+		User recipient = userService.getUserByUUID(messageDTO.getRecipientId());
+
+		List<Message> messageList = messageRepository.findAllBySenderAndRecipientAndReadAtIsNull(sender, recipient);
+		messageList.stream().forEach(message -> {
+			if ( messageDTO.getTime() != null){
+				message.setReadAt(messageDTO.getTime());
+			} else {
+				message.setReadAt(Timestamp.from(Instant.now()));
+			}
+			messageRepository.save(message);
+		});
 	}
 	
 	private MessageDTO convertMessageToDto(Message message){
