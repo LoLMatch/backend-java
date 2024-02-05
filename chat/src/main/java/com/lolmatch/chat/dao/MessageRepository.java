@@ -9,8 +9,9 @@ import java.util.UUID;
 
 public interface MessageRepository extends JpaRepository<Message, UUID> {
 	
-	int countAllBySenderAndRecipientAndReadAtIsNull(User sender, User recipient);
+	int countAllBySenderIdAndRecipientAndReadAtIsNull(UUID senderId, User recipient);
 	
+	long countAllBySenderIdAndRecipientId(UUID senderId, UUID recipientId);
 	
-	List<Message> findAllBySenderAndRecipientAndReadAtIsNull(User sender, User recipient);
+	List<Message> findAllBySenderIdAndRecipientIdAndReadAtIsNull(UUID senderId, UUID recipientId);
 }

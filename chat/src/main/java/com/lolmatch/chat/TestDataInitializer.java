@@ -1,12 +1,16 @@
 package com.lolmatch.chat;
 
 import com.lolmatch.chat.dao.ContactRepository;
+import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dao.UserRepository;
 import com.lolmatch.chat.entity.Contact;
+import com.lolmatch.chat.entity.Message;
 import com.lolmatch.chat.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 @Component
@@ -15,6 +19,8 @@ public class TestDataInitializer {
 	
 	private final UserRepository userRepository;
 	private final ContactRepository contactRepository;
+	
+	private final MessageRepository messageRepository;
 	
 	public void initUsers(){
 		User user = new User();
@@ -38,6 +44,11 @@ public class TestDataInitializer {
 		createContact(bob, ash);
 		createContact(bob, user1);
 		createContact(rob, ash);
+		
+		createMessage(bob, rob, "message1");
+		createMessage(rob, bob, "no content");
+		createMessage(bob, rob, "message2");
+		createMessage(rob, ash, "some message");
 	}
 	
 	private void createContact(User first, User second) {
@@ -52,5 +63,15 @@ public class TestDataInitializer {
 		backContact.setContactId(first.getId());
 		backContact.setContactUsername(first.getUsername());
 		contactRepository.save(backContact);
+	}
+	
+	private void createMessage(User sender, User recipient, String content){
+		Message message = new Message();
+		message.setSender(sender);
+		message.setRecipient(recipient);
+		message.setContent(content);
+		message.setCreatedAt(Timestamp.from(Instant.now()));
+		
+		messageRepository.save(message);
 	}
 }

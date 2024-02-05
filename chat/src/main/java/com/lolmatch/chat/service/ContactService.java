@@ -36,7 +36,6 @@ public class ContactService {
 	}
 	
 	private int countMessagesBetweenUsers(User user, UUID contactId){
-		User contact = userService.getUserByUUID(contactId);
-		return messageRepository.countAllBySenderAndRecipientAndReadAtIsNull(contact, user);
+		return messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contactId, user);
 	}
 }

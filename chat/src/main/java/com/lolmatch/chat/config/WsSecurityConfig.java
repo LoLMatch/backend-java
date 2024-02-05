@@ -8,14 +8,13 @@ import org.springframework.security.config.annotation.web.socket.AbstractSecurit
 
 @Configuration
 public class WsSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
-	// FIXME - websocket security jest zrobione w stary sposób bo w nowym nie można wyłączyć CSRF
+	// FIXME - websocket security is configured in deprecated way, because new method cannot disable csrf
 	@Override
 	protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
 		messages
 				.simpTypeMatchers(SimpMessageType.CONNECT).permitAll()
 				.nullDestMatcher().authenticated()
 				.anyMessage().authenticated();
-		// TODO - skonfigurować to w odpowiedni sposób
 	}
 	
 	@Override
