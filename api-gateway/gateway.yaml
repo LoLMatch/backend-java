@@ -41,3 +41,14 @@ metadata:
   name: api-gateway-cm
 data:
   SPRING_PROFILES_ACTIVE: dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway-service-external
+spec:
+  selector:
+    app: api-gateway
+  ports:
+    - port: 65501
+      targetPort: 8080

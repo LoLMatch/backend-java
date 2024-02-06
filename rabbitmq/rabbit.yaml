@@ -11,9 +11,17 @@ spec:
       labels:
         name: rabbitmq
     spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: rabbitmq-config
       containers:
         - name: rabbitmq
           image: rabbitmq:lolmatch
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/rabbitmq
+              readOnly: true
           resources:
             limits:
               memory: 512Mi
@@ -38,7 +46,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq-service
+  name: rabbitmq
 spec:
   selector:
     name: rabbitmq
@@ -61,3 +69,12 @@ type: Opaque
 data:
   user: Z3Vlc3QK
   password: Z3Vlc3QK
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+data:
+  rabbitmq.conf: |
+    loopback_users = none
+    log.console = true
