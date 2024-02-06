@@ -29,6 +29,7 @@
     <modules>
         <module>api-gateway</module>
         <module>keycloak</module>
+        <module>chat</module>
     </modules>
 
     <dependencyManagement>
