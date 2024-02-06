@@ -10,7 +10,7 @@ RUN mvn -f /app/keycloak/pom.xml clean install
 
 RUN ls -la /app/keycloak/target
 
-FROM keycloak/keycloak:23.0.4
+FROM keycloak/keycloak:23.0.6
 
 
 # Enable health and metrics support
