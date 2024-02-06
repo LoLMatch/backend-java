@@ -1,15 +1,15 @@
 package com.lolmatch.chat.service;
 
 import com.lolmatch.chat.dao.ContactRepository;
-import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dto.ContactDTO;
 import com.lolmatch.chat.entity.Contact;
+import com.lolmatch.chat.entity.Message;
 import com.lolmatch.chat.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,7 +21,7 @@ public class ContactService {
 	
 	private final UserService userService;
 	
-	private final MessageRepository messageRepository;
+	private final MessageService messageService;
 	
 	public ContactDTO getContactListForUser(UUID id){
 		User user = userService.getUserByUUID(id);
@@ -29,13 +29,22 @@ public class ContactService {
 		
 		ContactDTO dto = new ContactDTO();
 		dto.setUser(user);
-		List<ContactDTO.Contact> contacts = contactsFromDb.stream().map(contact -> new ContactDTO.Contact(contact.getContactId(), contact.getContactUsername(), countMessagesBetweenUsers(user, contact.getContactId()))).collect(Collectors.toList());
+		List<ContactDTO.Contact> contacts = contactsFromDb.stream().map(contact -> {
+			List<Message> messages = messageService.getListOfMessages(id, contact.getContactId(), Optional.of(1), Optional.of(0)).getMessages();
+			String lastMessageContent;
+			UUID lastMessageSenderId;
+			if ( messages.isEmpty()){
+				lastMessageContent = "";
+				lastMessageSenderId = null;
+			} else {
+				Message message = messages.get(0);
+				lastMessageContent = message.getContent();
+				lastMessageSenderId = message.getSender() == user ?  id : contact.getContactId();
+			}
+			return new ContactDTO.Contact(contact.getContactId(), contact.getContactUsername(), messageService.countMessagesBetweenUsers(user, contact.getContactId()), lastMessageContent, lastMessageSenderId);
+		}).collect(Collectors.toList());
 		dto.setContacts(contacts);
 		
 		return dto;
-	}
-	
-	private int countMessagesBetweenUsers(User user, UUID contactId){
-		return messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contactId, user);
 	}
 }

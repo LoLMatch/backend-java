@@ -87,6 +87,10 @@ public class MessageService {
 		return convertMessageToDto(message);
 	}
 	
+	public int countMessagesBetweenUsers(User user, UUID contactId){
+		return messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contactId, user);
+	}
+	
 	public void setMessageRead(IncomingMessageDTO messageDTO) {
 		List<Message> messageList = messageRepository.findAllBySenderIdAndRecipientIdAndReadAtIsNull(
 				messageDTO.getSenderId(),

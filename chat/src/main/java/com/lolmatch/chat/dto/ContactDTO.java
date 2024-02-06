@@ -15,7 +15,7 @@ public class ContactDTO {
 	
 	private List<Contact> contacts;
 	
-	public record Contact (UUID id,String username, Integer unreadMessages){}
+	public record Contact ( UUID contactId, String username, Integer unreadMessages, String lastMessage, UUID lastMessageSenderId){}
 }
 
 
