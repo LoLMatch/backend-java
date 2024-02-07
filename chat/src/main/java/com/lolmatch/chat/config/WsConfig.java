@@ -1,6 +1,9 @@
 package com.lolmatch.chat.config;
 
+import com.lolmatch.chat.dto.UserStatusChangeDTO;
+import com.lolmatch.chat.util.ChangeUserStatusChannelInterceptor;
 import com.lolmatch.chat.util.TestChannelInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -8,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -27,10 +31,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
+@RequiredArgsConstructor
 public class WsConfig implements WebSocketMessageBrokerConfigurer {
 	
 	@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
 	private String issuerUri;
+	
+	private final ChangeUserStatusChannelInterceptor changeUserStatusChannelInterceptor;
 	
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -46,7 +53,8 @@ public class WsConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureClientInboundChannel(ChannelRegistration registration) {
 		registration.interceptors( new TestChannelInterceptor());
-		registration.interceptors( new AuthCHannelInterceptor());
+		registration.interceptors( new AuthChannelInterceptor());
+		registration.interceptors( changeUserStatusChannelInterceptor);
 	}
 	
 	@Override
@@ -54,7 +62,7 @@ public class WsConfig implements WebSocketMessageBrokerConfigurer {
 		registration.interceptors(new TestChannelInterceptor());
 	}
 	
-	private class AuthCHannelInterceptor implements ChannelInterceptor{
+	private class AuthChannelInterceptor implements ChannelInterceptor{
 		
 		private final JwtDecoder jwtDecoder = NimbusJwtDecoder.withIssuerLocation(issuerUri).build();
 		@Override

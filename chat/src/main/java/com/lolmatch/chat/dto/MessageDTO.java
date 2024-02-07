@@ -11,6 +11,8 @@ import java.util.UUID;
 @Value
 @Builder
 public class MessageDTO implements Serializable {
+	
+	String action = "MESSAGE";
 	UUID id;
 	String content;
 	Timestamp createdAt;
