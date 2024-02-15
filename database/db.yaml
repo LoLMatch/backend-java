@@ -15,17 +15,18 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:lolmatch
+          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/postgres
           ports:
             - containerPort: 5432
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
           env:
+            # todo user
             - name: POSTGRES_PASSWORD
-              value: postgres
+              value: postgres # todo
             - name: POSTGRES_DB
-              value: keycloak
+              value: keycloak # todo
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -44,20 +45,6 @@ spec:
       targetPort: 5432
 ---
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
-  storageClassName: slow
-  hostPath:
-    path: /mnt/postgres
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
@@ -67,7 +54,7 @@ spec:
       storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: slow
+  storageClassName: pd-ssd
 ---
 apiVersion: v1
 kind: Secret
@@ -82,7 +69,7 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
+  name: database
 spec:
   type: NodePort
   selector:
@@ -90,4 +77,4 @@ spec:
   ports:
     - port: 5432
       targetPort: 5432
-      nodePort: 32004
+      nodePort: 32005
