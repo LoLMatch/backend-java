@@ -1,6 +1,6 @@
-FROM rabbitmq:latest
+FROM rabbitmq:3-management
 
-ENV RABBITMQ_DEFAULT_USER=guest
-ENV RABBITMQ_DEFAULT_PASS=guest
+ENV RABBIT_DEFINITIONS_PATH /etc/rabbitmq/definitions.json
 
-RUN rabbitmq-plugins enable --offline rabbitmq_management
+COPY rabbitmq/definitions.json ${RABBIT_DEFINITIONS_PATH}
+COPY rabbitmq/rabbitmq.conf /etc/rabbitmq/conf.d/rabbitmq.conf
