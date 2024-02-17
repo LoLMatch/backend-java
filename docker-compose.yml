@@ -24,9 +24,6 @@ services:
       dockerfile: rabbitmq/Dockerfile
     container_name: "rabbitmq"
     image: rabbitmq:lolmatch
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -39,6 +36,10 @@ services:
     build:
       context: .
       dockerfile: keycloak/Dockerfile
+      # tak mozna zrobic
+      # args:
+      #   - AMQP_USERNAME=user
+      #   - AMQP_PASSWORD=password
     container_name: "keycloak"
     image: keycloak:lolmatch
     ports:

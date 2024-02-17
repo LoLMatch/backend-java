@@ -1,6 +1,18 @@
 name: "Destroy the infrastructure"
+
 on:
-    workflow_dispatch:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to be used"
+        required: true
+        type: choice
+        options:
+          - production
+          - development
+    
+env:
+  PATH_TO_TF: terraform/environments/${{ inputs.environment }}
 
 jobs:
     destroy:
@@ -20,6 +32,6 @@ jobs:
 
         - name: 'Terraform destroy'
           run: |
-            terraform destroy -auto-approve -var="project_id=${{ secrets.PROJECT_ID }}
+            terraform -chdir=$PATH_TO_TF destroy -auto-approve -var="project_id=${{ secrets.PROJECT_ID }}"
       
         

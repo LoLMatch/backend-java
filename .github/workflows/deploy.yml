@@ -1,16 +1,34 @@
 name: Deploy services on a cluster
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch: 
-
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to be used"
+        required: true
+        type: choice
+        options:
+          - production
+          - development
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      
+      - uses: ./.github/workflows/build_and_push.yml
 
-      - name: 
+  provision:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./.github/workflows/provision.yml
+        with:
+          environment: ${{ inputs.environment }}
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: provision
+    steps:
+      - uses: actions/checkout@v2
