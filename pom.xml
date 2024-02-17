@@ -21,7 +21,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <keycloak.version>22.0.5</keycloak.version>
+        <keycloak.version>23.0.6</keycloak.version>
         <rabbitmq.version>5.20.0</rabbitmq.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
     </properties>
@@ -29,6 +29,7 @@
     <modules>
         <module>api-gateway</module>
         <module>keycloak</module>
+        <module>chat</module>
     </modules>
 
     <dependencyManagement>

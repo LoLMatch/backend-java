@@ -1,4 +1,4 @@
-package com.lolmatch;
+package com.lolmatch.keycloak;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -9,13 +9,7 @@ import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Properties;
 
 public class AmqpEventListenerProviderFactory implements EventListenerProviderFactory {
@@ -29,7 +23,7 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 	@Override
 	public EventListenerProvider create(KeycloakSession keycloakSession) {
 		try {
-			return new AmqpEventListenerProvider(connection);
+			return new AmqpEventListenerProvider(connection, keycloakSession);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			throw new RuntimeException(e);
