@@ -17,7 +17,7 @@ spec:
             name: rabbitmq-config
       containers:
         - name: rabbitmq
-          image: rabbitmq:lolmatch
+          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/rabbitmq
           volumeMounts:
             - name: config-volume
               mountPath: /etc/rabbitmq

@@ -13,11 +13,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: api-gateway:lolmatch
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/api-gateway
           envFrom:
             - configMapRef:
                 name: api-gateway-cm
@@ -49,6 +45,7 @@ metadata:
 spec:
   selector:
     app: api-gateway
+  type: LoadBalancer
   ports:
     - port: 65501
       targetPort: 8080

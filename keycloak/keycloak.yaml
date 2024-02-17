@@ -16,14 +16,14 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: keycloak:lolmatch
+          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/keycloak
           envFrom:
             - configMapRef:
                 name: keycloak-configuration
           resources:
             limits:
-              memory: 1Gi
-              cpu: 1000m
+              memory: 128Mi
+              cpu: 200m
           ports:
             - containerPort: 8443
 ---

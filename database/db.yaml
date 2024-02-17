@@ -22,11 +22,12 @@ spec:
             - name: data
               mountPath: /var/lib/postgresql/data
           env:
-            # todo user
             - name: POSTGRES_PASSWORD
               value: postgres # todo
             - name: POSTGRES_DB
               value: keycloak # todo
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -54,7 +55,6 @@ spec:
       storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: pd-ssd
 ---
 apiVersion: v1
 kind: Secret
