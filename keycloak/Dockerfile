@@ -24,8 +24,6 @@ ENV KC_METRICS_ENABLED=true
 ENV KC_DB=postgres
 ENV KC_DB_PASSWORD=postgres
 ENV KC_DB_USERNAME=postgres
-# PONIZSZE DLA K8s
-# ENV KC_DB_URL=jdbc:postgresql://postgres-service:5432/keycloak
 ENV KC_DB_URL=jdbc:postgresql://database:5432/keycloak
 # TO BEDZIE DO ZMIANY CALE, to w confie musi byc podawane
 # HOSTNAME TO IP ZASOBU
