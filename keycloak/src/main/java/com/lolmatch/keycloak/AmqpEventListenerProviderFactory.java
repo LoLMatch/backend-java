@@ -13,13 +13,13 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class AmqpEventListenerProviderFactory implements EventListenerProviderFactory {
-	
+
 	private static final Logger logger = Logger.getLogger(AmqpEventListenerProviderFactory.class.getName());
-	
+
 	ConnectionFactory connectionFactory;
 	Connection connection;
 	Properties properties;
-	
+
 	@Override
 	public EventListenerProvider create(KeycloakSession keycloakSession) {
 		try {
@@ -29,7 +29,7 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public void init(Config.Scope scope) {
 		loadProperties();
@@ -47,19 +47,19 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 			logger.error(e.getMessage());
 		}
 	}
-	
+
 	public void loadProperties() {
 		properties = new Properties();
-		properties.setProperty("amqp-hostname",System.getProperty("AMQP_HOSTNAME", "rabbitmq"));
-		properties.setProperty("amqp-port", System.getProperty("AMQP_PORT", "5672"));
-		properties.setProperty("amqp-username", System.getProperty("AMQP_USERNAME", "guest"));
-		properties.setProperty("amqp-password", System.getProperty("AMQP_PASSWORD", "guest"));
+		properties.setProperty("amqp-hostname", System.getenv("AMQP_HOSTNAME"));
+		properties.setProperty("amqp-port", System.getenv("AMQP_PORT"));
+		properties.setProperty("amqp-username", System.getenv("AMQP_USERNAME"));
+		properties.setProperty("amqp-password", System.getenv("AMQP_PASSWORD"));
 	}
-	
+
 	@Override
 	public void postInit(KeycloakSessionFactory keycloakSessionFactory) {
 	}
-	
+
 	@Override
 	public void close() {
 		try {
@@ -68,7 +68,7 @@ public class AmqpEventListenerProviderFactory implements EventListenerProviderFa
 			logger.error(e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public String getId() {
 		return "amqp_event_listener";

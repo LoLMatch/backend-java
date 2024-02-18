@@ -3,19 +3,18 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: 
+  workflow_call:
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
 
-      - name: Build and push Docker images
+      - name: Install docker compose and build images
         run: |
           apt-get update && apt-get install -y docker-compose
           docker-compose build
@@ -27,14 +26,14 @@ jobs:
 
       - name: Configure Docker credentials
         run: |
-          gcloud auth configure-docker europe-central2-docker.pkg.dev --quiet
+          gcloud auth configure-docker ${{ secrets.artifact_repository }} --quiet
 
       - name: Push Docker images to Artifact Registry
         run: |
           for service in $(docker image ls --format "{{.Repository}}:{{.Tag}}"); do
             if [[ $service == *"lolmatch"* ]]; then
               echo "Pushing $service to Artifact Registry"
-              docker tag $service europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend-java/$service
-              docker push europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend-java/$service
+              docker tag $service ${{ secrets.artifact_repository }}/${{ secrets.GCP_PROJECT_ID }}/${{ github.event.repository.name }}/$service
+              docker push -q ${{ secrets.artifact_repository }}/${{ secrets.GCP_PROJECT_ID }}/${{ github.event.repository.name }}/$service
             fi
           done    

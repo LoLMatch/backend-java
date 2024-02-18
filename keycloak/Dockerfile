@@ -12,6 +12,9 @@ RUN ls -la /app/keycloak/target
 
 FROM keycloak/keycloak:23.0.6
 
+# to trzeba z pliku konfiguracyjnego wczytać, poki co na sztywno zostawiamy
+ARG AMQP_USERNAME=admin
+ARG AMQP_PASSWORD=password
 
 # Enable health and metrics support
 ENV KC_HEALTH_ENABLED=true
@@ -22,10 +25,12 @@ ENV KC_DB=postgres
 ENV KC_DB_PASSWORD=postgres
 ENV KC_DB_USERNAME=postgres
 ENV KC_DB_URL=jdbc:postgresql://database:5432/keycloak
+# TO BEDZIE DO ZMIANY CALE, to w confie musi byc podawane
+# HOSTNAME TO IP ZASOBU
 ENV AMQP_HOSTNAME=rabbitmq
 ENV AMQP_PORT=5672
-ENV AMQP_USERNAME=guest
-ENV AMQP_PASSWORD=guest
+ENV AMQP_USERNAME=$AMQP_USERNAME
+ENV AMQP_PASSWORD=$AMQP_PASSWORD
 
 # Logs
 ENV KC_LOG=file,console
@@ -35,7 +40,9 @@ ENV KEYCLOAK_ADMIN=admin
 ENV KEYCLOAK_ADMIN_PASSWORD=password
 
 # Set port
+ENV KC_HTTP_ENABLED=true
 ENV KC_HTTP_PORT=8443
+ENV KC_HTTPS_PORT=8444
 
 # Add providers
 WORKDIR /opt/keycloak/providers

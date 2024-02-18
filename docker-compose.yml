@@ -5,8 +5,9 @@ services:
     build:
       context: .
       dockerfile: database/Dockerfile
-    image: postgres:lolmatch
+    image: postgres:${TAG}
     container_name: "database"
+    platform: ${PLATFORM}
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -23,10 +24,8 @@ services:
       context: .
       dockerfile: rabbitmq/Dockerfile
     container_name: "rabbitmq"
-    image: rabbitmq:lolmatch
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+    platform: ${PLATFORM}
+    image: rabbitmq:${TAG}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -39,10 +38,16 @@ services:
     build:
       context: .
       dockerfile: keycloak/Dockerfile
+      # tak mozna zrobic
+      # args:
+      #   - AMQP_USERNAME=user
+      #   - AMQP_PASSWORD=password
     container_name: "keycloak"
-    image: keycloak:lolmatch
+    image: keycloak:${TAG}
+    platform: ${PLATFORM}
     ports:
       - "8443:8443"
+      - "8444:8444"
     depends_on:
       db:
         condition: service_healthy
@@ -58,7 +63,8 @@ services:
       context: .
       dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
-    image: api-gateway:lolmatch
+    platform: ${PLATFORM}
+    image: api-gateway:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=dev # extra logs + docker settings -> application-dev.properties
     ports:
@@ -72,8 +78,9 @@ services:
     build:
       context: .
       dockerfile: chat/Dockerfile
+    platform: ${PLATFORM}
     container_name: "chat-service"
-    image: chat-service:lolmatch
+    image: chat-service:${TAG}
     ports:
       - '8081:8080'
     networks:

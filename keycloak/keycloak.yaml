@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    id: keycloak
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      id: keycloak
+  template:
+    metadata:
+      labels:
+        id: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/keycloak
+          envFrom:
+            - configMapRef:
+                name: keycloak-configuration
+          ports:
+            - containerPort: 8443
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+spec:
+  # type: LoadBalancer TODO HELM
+  selector:
+    id: keycloak
+  ports:
+    - port: 9090
+      targetPort: 8443
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-configuration
+data:
+  AMQP_HOSTNAME: rabbitmq
+  AMQP_PORT: "5672"
+  AMQP_USERNAME: user
+  AMQP_PASSWORD: password

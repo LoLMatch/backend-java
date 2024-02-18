@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database
+spec:
+  selector:
+    matchLabels:
+      id: postgres
+  serviceName: postgres-headless-service
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        id: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_PASSWORD
+              value: postgres # todo
+            - name: POSTGRES_DB
+              value: keycloak # todo
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-headless-service
+spec:
+  clusterIP: None
+  selector:
+    id: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-credentials
+type: Opaque
+data:
+  database: a2V5Y2xvYWsK
+  username: cG9zdGdyZXMK
+  password: cG9zdGdyZXMK
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+spec:
+  selector:
+    id: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
