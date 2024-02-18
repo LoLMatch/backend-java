@@ -47,6 +47,7 @@ services:
     platform: ${PLATFORM}
     ports:
       - "8443:8443"
+      - "8444:8444"
     depends_on:
       db:
         condition: service_healthy

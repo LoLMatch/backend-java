@@ -40,7 +40,9 @@ ENV KEYCLOAK_ADMIN=admin
 ENV KEYCLOAK_ADMIN_PASSWORD=password
 
 # Set port
+ENV KC_HTTP_ENABLED=true
 ENV KC_HTTP_PORT=8443
+ENV KC_HTTPS_PORT=8444
 
 # Add providers
 WORKDIR /opt/keycloak/providers
