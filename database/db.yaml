@@ -71,10 +71,8 @@ kind: Service
 metadata:
   name: database
 spec:
-  type: NodePort
   selector:
     id: postgres
   ports:
     - port: 5432
       targetPort: 5432
-      nodePort: 32005
