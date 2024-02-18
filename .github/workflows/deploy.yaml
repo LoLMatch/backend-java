@@ -1,4 +1,4 @@
-name: Deploy services on a cluster
+name: Provision infrastructure and deploy services on a cluster
 on:
   workflow_dispatch:
     inputs:

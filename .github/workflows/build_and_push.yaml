@@ -26,14 +26,14 @@ jobs:
 
       - name: Configure Docker credentials
         run: |
-          gcloud auth configure-docker ${{ secrets.artifact_repository }} --quiet
+          gcloud auth configure-docker ${{ secrets.ARTIFACT_REPO }} --quiet
 
       - name: Push Docker images to Artifact Registry
         run: |
           for service in $(docker image ls --format "{{.Repository}}:{{.Tag}}"); do
             if [[ $service == *"lolmatch"* ]]; then
               echo "Pushing $service to Artifact Registry"
-              docker tag $service ${{ secrets.artifact_repository }}/${{ secrets.GCP_PROJECT_ID }}/${{ github.event.repository.name }}/$service
-              docker push -q ${{ secrets.artifact_repository }}/${{ secrets.GCP_PROJECT_ID }}/${{ github.event.repository.name }}/$service
+              docker tag $service ${{ secrets.ARTIFACT_REPO }}/${{ secrets.GCP_PROJECT_ID }}/${{ github.event.repository.name }}/$service
+              docker push -q ${{ secrets.ARTIFACT_REPO }}/${{ secrets.GCP_PROJECT_ID }}/${{ github.event.repository.name }}/$service
             fi
           done    
