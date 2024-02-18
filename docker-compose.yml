@@ -7,6 +7,7 @@ services:
       dockerfile: database/Dockerfile
     image: postgres:${TAG}
     container_name: "database"
+    platform: ${PLATFORM}
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -23,6 +24,7 @@ services:
       context: .
       dockerfile: rabbitmq/Dockerfile
     container_name: "rabbitmq"
+    platform: ${PLATFORM}
     image: rabbitmq:${TAG}
     ports:
       - "5672:5672"
@@ -42,6 +44,7 @@ services:
       #   - AMQP_PASSWORD=password
     container_name: "keycloak"
     image: keycloak:${TAG}
+    platform: ${PLATFORM}
     ports:
       - "8443:8443"
     depends_on:
@@ -59,6 +62,7 @@ services:
       context: .
       dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
+    platform: ${PLATFORM}
     image: api-gateway:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=dev # extra logs + docker settings -> application-dev.properties
@@ -73,6 +77,7 @@ services:
     build:
       context: .
       dockerfile: chat/Dockerfile
+    platform: ${PLATFORM}
     container_name: "chat-service"
     image: chat-service:${TAG}
     ports:

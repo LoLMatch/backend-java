@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: chat
@@ -6,6 +6,9 @@ metadata:
     app: lolmatch
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      app: lolmatch
   template:
     metadata:
       labels:
@@ -13,11 +16,7 @@ spec:
     spec:
       containers:
         - name: chat
-          image: chat-service:lolmatch
-          resources:
-            limits:
-              cpu: 100m
-              memory: 128Mi
+          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/chat-service
           ports:
             - containerPort: 8080
 ---
