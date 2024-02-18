@@ -16,14 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - uses: ./.github/workflows/build_and_push.yml
+      - uses: ./.github/workflows/build_and_push.yaml
 
   provision:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ./.github/workflows/provision.yml
+      - uses: ./.github/workflows/provision.yaml
         with:
           environment: ${{ inputs.environment }}
   
@@ -32,3 +32,5 @@ jobs:
     needs: provision
     steps:
       - uses: actions/checkout@v2
+
+      - uses: ./.github/workflows/apply_chart.yaml

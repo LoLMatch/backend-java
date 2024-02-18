@@ -1,0 +1,20 @@
+name: Apply Helm Chart
+
+on:
+  push:
+    branches:
+      - main
+
+# This workflow is yet to be finished, once I implement Helm support.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Helm
+        run: |
+            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash

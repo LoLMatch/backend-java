@@ -32,6 +32,6 @@ jobs:
 
         - name: 'Terraform destroy'
           run: |
-            terraform -chdir=$PATH_TO_TF destroy -auto-approve -var="project_id=${{ secrets.PROJECT_ID }}"
+            terraform -chdir=$PATH_TO_TF destroy -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
       
         
