@@ -12,7 +12,8 @@ on:
           - development
 env:
   PATH_TO_TF: terraform/environments/${{ inputs.environment }}
-
+  TF_PLAN: tfplan
+  
 jobs:
   provision:
     runs-on: ubuntu-latest
@@ -35,24 +36,21 @@ jobs:
     - name: Terraform plan
       continue-on-error: true
       run: |
-        terraform -chdir=$PATH_TO_TF plan -out=tfplan
-        terraform show -json "tfplan" | jq > tfplan.json
+        terraform -chdir=$PATH_TO_TF plan -out=${TF_PLAN} -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
+        terraform -chdir=$PATH_TO_TF show -json "${TF_PLAN}" | jq > ${TF_PLAN}.json
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4        
       with:
         name: tfplan
-        path: tfplan.json
+        path: ${PATH_TO_TF}/tfplan.json
 
     - name: Terraform format
       run: terraform fmt -check
       continue-on-error: true
 
-    - name: Terraform plan
-      run: terraform -chdir=$PATH_TO_TF plan -out tfplan
-
     - name: Terraform apply
-      run: terraform -chdir=$PATH_TO_TF apply -auto-approve -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
+      run: terraform -chdir=$PATH_TO_TF apply -auto-approve ${TF_PLAN}
 
 
 
