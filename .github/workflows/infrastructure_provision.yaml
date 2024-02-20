@@ -13,10 +13,6 @@ on:
         description: "Environment to be used"
         required: true
         type: string
-    secrets:
-      credentials_json: 
-        description: "Credentials JSON to auth to GCP"
-        required: true
           
 env:
   PATH_TO_TF: terraform/environments/${{ inputs.environment }}
