@@ -23,10 +23,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Validate input
       run: |
-        if [[ "${{ inputs.environment }}" != "Production" && "${{ inputs.environment }}" != "Development" ]]; then
+        if [[ "${{ inputs.environment }}" != "production" && "${{ inputs.environment }}" != "development" ]]; then
           echo "Invalid environment: ${{ inputs.environment }}"
           exit 1
         fi  
