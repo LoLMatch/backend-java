@@ -6,19 +6,13 @@ on:
       environment:
         description: "Environment to be used"
         required: true
-        type: choice
-        options:
-          - production
-          - development
+        type: environment
   workflow_call:
     inputs:
       environment:
         description: "Environment to be used"
         required: true
-        type: choice
-        options:
-          - production
-          - development
+        type: string
           
 env:
   PATH_TO_TF: terraform/environments/${{ inputs.environment }}
@@ -29,6 +23,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    - name: Validate input
+      run: |
+        if [ ${{ inputs.environment }} ne 'production' and ${{ inputs.environment }} ne 'deployment' ]; do
+          exit 1
+        done
+    
     - uses: actions/checkout@v2
 
     - name: Authenticate with Google Cloud

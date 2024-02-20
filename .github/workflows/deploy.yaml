@@ -5,10 +5,7 @@ on:
       environment:
         description: "Environment to be used"
         required: true
-        type: choice
-        options:
-          - production
-          - development
+        type: environment
 
 jobs:
   build:
