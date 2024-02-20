@@ -26,7 +26,7 @@ jobs:
 
     - name: Validate input
       run: |
-        if [[ "${{ inputs.environment }}" != "Production" && "${{ inputs.environment }}" != "Dsevelopment" ]]; then
+        if [[ "${{ inputs.environment }}" != "Production" && "${{ inputs.environment }}" != "Development" ]]; then
           echo "Invalid environment: ${{ inputs.environment }}"
           exit 1
         fi  
