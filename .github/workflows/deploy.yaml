@@ -10,11 +10,15 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/build_and_push.yaml
+    secrets:
+      credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
   provision:
     uses: ./.github/workflows/infrastructure_provision.yaml
     with:
       environment: ${{ inputs.environment }}
+    secrets:
+      credentials_json: ${{ secrets.GCP_CREDENTIALS }}
   
   deploy:
     needs: [build, provision]
