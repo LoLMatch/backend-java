@@ -4,6 +4,7 @@ import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dto.FetchMessagesDTO;
 import com.lolmatch.chat.dto.IncomingMessageDTO;
 import com.lolmatch.chat.dto.MessageDTO;
+import com.lolmatch.chat.dto.MessageReadDTO;
 import com.lolmatch.chat.entity.Message;
 import com.lolmatch.chat.entity.User;
 import jakarta.persistence.EntityManager;
@@ -20,7 +21,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,7 +91,7 @@ public class MessageService {
 		return messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contactId, user);
 	}
 	
-	public void setMessageRead(IncomingMessageDTO messageDTO) {
+	public MessageReadDTO setMessageRead(IncomingMessageDTO messageDTO) {
 		List<Message> messageList = messageRepository.findAllBySenderIdAndRecipientIdAndReadAtIsNull(
 				messageDTO.getSenderId(),
 				messageDTO.getRecipientId()
@@ -105,6 +105,13 @@ public class MessageService {
 			}
 			messageRepository.save(message);
 		});
+		Timestamp time;
+		if ( messageDTO.getTime() == null){
+			time = Timestamp.from(Instant.now());
+		} else {
+			time = Timestamp.from(messageDTO.getTime());
+		}
+		return new MessageReadDTO(messageDTO.getSenderId(), messageDTO.getRecipientId(), time);
 	}
 	
 	private MessageDTO convertMessageToDto(Message message){
