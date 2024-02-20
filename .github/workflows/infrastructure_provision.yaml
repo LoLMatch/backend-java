@@ -15,7 +15,7 @@ on:
         type: string
           
 env:
-  PATH_TO_TF: terraform/environments/${{ inputs.environment }}
+  PATH_TO_TF: ./terraform/environments/${{ inputs.environment }}
   TF_PLAN: tfplan
   
 jobs:
@@ -54,7 +54,7 @@ jobs:
       uses: actions/upload-artifact@v4        
       with:
         name: tfplan
-        path: ${{ env.PATH_TO_TF }}/${{ env.TF_PLAN }}.json
+        path: ${{ env.TF_PLAN }}.json
 
     - name: Terraform format
       run: terraform fmt -check
