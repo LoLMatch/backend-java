@@ -1,9 +1,7 @@
 name: Apply Helm Chart
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 # This workflow is yet to be finished, once I implement Helm support.
 
