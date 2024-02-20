@@ -10,16 +10,14 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/build_and_push.yaml
-    secrets:
-      credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+    secrets: inherit
 
   provision:
     uses: ./.github/workflows/infrastructure_provision.yaml
     with:
       environment: ${{ inputs.environment }}
-    secrets:
-      credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-  
+    secrets: inherit
+
   deploy:
     needs: [build, provision]
     uses: ./.github/workflows/apply_chart.yaml
