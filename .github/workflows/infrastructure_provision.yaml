@@ -26,9 +26,10 @@ jobs:
 
     - name: Validate input
       run: |
-        if [ ${{ inputs.environment }} -ne 'production' and ${{ inputs.environment }} -ne 'deployment' ] then
+        if [[ "${{ inputs.environment }}" != "production" && "${{ inputs.environment }}" != "development" ]]; then
+          echo "Invalid environment: ${{ inputs.environment }}"
           exit 1
-        fi
+        fi  
     
     - uses: actions/checkout@v2
 
