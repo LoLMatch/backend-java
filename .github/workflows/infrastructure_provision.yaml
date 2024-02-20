@@ -26,9 +26,9 @@ jobs:
 
     - name: Validate input
       run: |
-        if [ ${{ inputs.environment }} ne 'production' and ${{ inputs.environment }} ne 'deployment' ]; do
+        if [ ${{ inputs.environment }} ne 'production' and ${{ inputs.environment }} ne 'deployment' ] then
           exit 1
-        done
+        fi
     
     - uses: actions/checkout@v2
 
