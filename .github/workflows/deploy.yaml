@@ -12,25 +12,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      
-      - uses: ./.github/workflows/build_and_push.yaml
+    uses: ./.github/workflows/build_and_push.yaml
 
   provision:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: ./.github/workflows/provision.yaml
-        with:
-          environment: ${{ inputs.environment }}
+    uses: ./.github/workflows/infrastructure_provision.yaml
+    with:
+      environment: ${{ inputs.environment }}
   
   deploy:
-    runs-on: ubuntu-latest
-    needs: provision
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: ./.github/workflows/apply_chart.yaml
+    needs: [build, provision]
+    uses: ./.github/workflows/apply_chart.yaml

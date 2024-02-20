@@ -10,6 +10,16 @@ on:
         options:
           - production
           - development
+  workflow_call:
+    inputs:
+      environment:
+        description: "Environment to be used"
+        required: true
+        type: choice
+        options:
+          - production
+          - development
+          
 env:
   PATH_TO_TF: terraform/environments/${{ inputs.environment }}
   TF_PLAN: tfplan

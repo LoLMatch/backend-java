@@ -30,8 +30,12 @@ jobs:
         - name: 'Set up Terraform'
           uses: hashicorp/setup-terraform@v3
 
-        - name: 'Terraform destroy'
+        - name: Terraform initialize
           run: |
-            terraform -chdir=$PATH_TO_TF destroy -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+            terraform -chdir=${{ env.PATH_TO_TF }} init
+
+        - name: Terraform destroy
+          run: |
+            terraform -chdir=${{ env.PATH_TO_TF }} destroy -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
       
         
