@@ -1,9 +1,9 @@
-variable "project_id" {}
+variable "project" {}
 variable "location" {}
 variable "cluster_name" {}
 
 provider "google" {
-  project = var.project_id
+  project = var.project
   region  = var.location
 }
 
