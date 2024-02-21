@@ -36,5 +36,6 @@ jobs:
 
         - name: Terraform destroy
           run: |
+            terraform -chdir=${{ env.PATH_TO_TF }} refresh -var="project=${{ secrets.GCP_PROJECT_ID }}"
             terraform -chdir=${{ env.PATH_TO_TF }} destroy -lock=false -auto-approve -var="project=${{ secrets.GCP_PROJECT_ID }}"
       
