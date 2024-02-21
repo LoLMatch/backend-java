@@ -47,7 +47,7 @@ jobs:
     - name: Terraform plan
       continue-on-error: true
       run: |
-        terraform -chdir=${{ env.PATH_TO_TF }} plan -out=${{ env.TF_PLAN }} -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
+        terraform -chdir=${{ env.PATH_TO_TF }} plan -out=${{ env.TF_PLAN }} -var "project=${{ secrets.GCP_PROJECT_ID }}"
         mv ${{ env.PATH_TO_TF }}/${{ env.TF_PLAN }} ${{ env.TF_PLAN }}
 
     - name: Archive production artifacts
