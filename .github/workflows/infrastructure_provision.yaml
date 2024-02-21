@@ -54,11 +54,11 @@ jobs:
       uses: actions/upload-artifact@v4        
       with:
         name: tfplan
-        path: ${{ env.TF_PLAN }}
+        path: ./${{ env.TF_PLAN }}
 
     - name: Terraform format
       run: terraform fmt -check
       continue-on-error: true
 
     - name: Terraform apply
-      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve ${{ env.TF_PLAN }}
+      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve ./${{ env.TF_PLAN }}
