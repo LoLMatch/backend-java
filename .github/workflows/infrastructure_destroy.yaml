@@ -34,6 +34,11 @@ jobs:
           run: |
             terraform -chdir=${{ env.PATH_TO_TF }} init
 
+        - name: Terraform refresh
+          run: |
+            export TF_LOG=DEBUG
+            terraform -chdir=${{ env.PATH_TO_TF }} refresh -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+
         - name: Terraform destroy
           run: |
             export TF_LOG=DEBUG
