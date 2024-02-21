@@ -3,6 +3,7 @@ module "kubernetes" {
   project      = var.project
   location     = var.location
   cluster_name = var.cluster_name
+  machine_type = var.machine_type
 }
 
 terraform {
