@@ -62,7 +62,3 @@ jobs:
 
     - name: Terraform apply
       run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve ${{ env.TF_PLAN }}
-
-
-
-

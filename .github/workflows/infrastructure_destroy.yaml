@@ -36,6 +36,6 @@ jobs:
 
         - name: Terraform destroy
           run: |
+            export TF_LOG=DEBUG
             terraform -chdir=${{ env.PATH_TO_TF }} destroy -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
       
-        
