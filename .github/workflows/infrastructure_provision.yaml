@@ -48,13 +48,12 @@ jobs:
       continue-on-error: true
       run: |
         terraform -chdir=${{ env.PATH_TO_TF }} plan -out=${{ env.TF_PLAN }} -var "project=${{ secrets.GCP_PROJECT_ID }}"
-        mv ${{ env.PATH_TO_TF }}/${{ env.TF_PLAN }} ${{ env.TF_PLAN }}
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4        
       with:
         name: tfplan
-        path: ./${{ env.TF_PLAN }}
+        path: ${{ env.PATH_TO_TF }}/${{ env.TF_PLAN }}
 
     - name: Terraform format
       run: terraform fmt -check
