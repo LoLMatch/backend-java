@@ -60,4 +60,5 @@ jobs:
       continue-on-error: true
 
     - name: Terraform apply
-      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve ./${{ env.TF_PLAN }}
+      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve -var "project=${{ secrets.GCP_PROJECT_ID }}"
+
