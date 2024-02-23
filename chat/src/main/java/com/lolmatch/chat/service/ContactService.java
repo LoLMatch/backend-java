@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,17 +45,20 @@ public class ContactService {
 					Optional.of(0)).getMessages();
 			String lastMessageContent;
 			UUID lastMessageSenderId;
+			Timestamp lastMessageTimestamp;
 			if ( messages.isEmpty()){
 				lastMessageContent = "";
 				lastMessageSenderId = null;
+				lastMessageTimestamp = null;
 			} else {
 				Message message = messages.get(0);
 				lastMessageContent = message.getContent();
 				lastMessageSenderId = message.getSender() == user ?  id : contact.getContactId();
+				lastMessageTimestamp = message.getCreatedAt();
 			}
 			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContactId()));
 			System.out.println(simpUser);
-			Boolean isActive;
+			boolean isActive;
 			if ( simpUser != null) {
 				isActive = simpUser.hasSessions();
 			} else {
@@ -66,7 +70,8 @@ public class ContactService {
 					messageService.countMessagesBetweenUsers(user, contact.getContactId()),
 					lastMessageContent,
 					lastMessageSenderId,
-					isActive);
+					isActive,
+					lastMessageTimestamp);
 		}).collect(Collectors.toList());
 		dto.setContacts(contacts);
 		
