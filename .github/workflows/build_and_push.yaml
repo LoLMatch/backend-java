@@ -20,7 +20,7 @@ jobs:
           docker-compose build
 
       - name: 'Authenticate with Google Cloud'
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/auth@v2'
         with:
             credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 

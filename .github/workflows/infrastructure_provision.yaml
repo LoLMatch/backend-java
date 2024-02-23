@@ -6,22 +6,16 @@ on:
       environment:
         description: "Environment to be used"
         required: true
-        type: choice
-        options:
-          - production
-          - development
+        type: environment
   workflow_call:
     inputs:
       environment:
         description: "Environment to be used"
         required: true
-        type: choice
-        options:
-          - production
-          - development
+        type: string
           
 env:
-  PATH_TO_TF: terraform/environments/${{ inputs.environment }}
+  PATH_TO_TF: ./terraform/environments/${{ inputs.environment }}
   TF_PLAN: tfplan
   
 jobs:
@@ -29,10 +23,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Validate input
+      run: |
+        if [[ "${{ inputs.environment }}" != "production" && "${{ inputs.environment }}" != "development" ]]; then
+          echo "Invalid environment: ${{ inputs.environment }}"
+          exit 1
+        fi  
+    
     - uses: actions/checkout@v2
 
     - name: Authenticate with Google Cloud
-      uses: 'google-github-actions/auth@v0'
+      uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
@@ -46,22 +47,18 @@ jobs:
     - name: Terraform plan
       continue-on-error: true
       run: |
-        terraform -chdir=${{ env.PATH_TO_TF }} plan -out=${{ env.TF_PLAN }} -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
-        terraform -chdir=${{ env.PATH_TO_TF }}  show -json "${{ env.TF_PLAN }}" | jq > ${{ env.TF_PLAN }}.json
+        terraform -chdir=${{ env.PATH_TO_TF }} plan -out=${{ env.TF_PLAN }} -var "project=${{ secrets.GCP_PROJECT_ID }}"
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4        
       with:
         name: tfplan
-        path: ${{ env.PATH_TO_TF }}/${{ env.TF_PLAN }}.json
+        path: ${{ env.PATH_TO_TF }}/${{ env.TF_PLAN }}
 
     - name: Terraform format
       run: terraform fmt -check
       continue-on-error: true
 
     - name: Terraform apply
-      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve ${{ env.TF_PLAN }}
-
-
-
+      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve -var "project=${{ secrets.GCP_PROJECT_ID }}"
 
