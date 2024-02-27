@@ -1,6 +1,7 @@
 package com.lolmatch.chat.service;
 
 import com.lolmatch.chat.dao.ContactRepository;
+import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dto.ContactDTO;
 import com.lolmatch.chat.entity.Contact;
 import com.lolmatch.chat.entity.Message;
@@ -24,7 +25,7 @@ public class ContactService {
 	
 	private final UserService userService;
 	
-	private final MessageService messageService;
+	private final MessageRepository messageRepository;
 	
 	private final SimpUserRegistry simpUserRegistry;
 	
@@ -38,26 +39,22 @@ public class ContactService {
 		ContactDTO dto = new ContactDTO();
 		dto.setUser(user);
 		List<ContactDTO.Contact> contacts = contactsFromDb.stream().map(contact -> {
-			List<Message> messages = messageService.getListOfMessages(
-					id,
-					contact.getContactId(),
-					Optional.of(1),
-					Optional.of(0)).getMessages();
+			Optional<Message> lastMessage = messageRepository.getLastMessageBetweenUsers(id, contact.getContactId());
+			
 			String lastMessageContent;
 			UUID lastMessageSenderId;
 			Timestamp lastMessageTimestamp;
-			if ( messages.isEmpty()){
+			if ( lastMessage.isEmpty()){
 				lastMessageContent = "";
 				lastMessageSenderId = null;
 				lastMessageTimestamp = null;
 			} else {
-				Message message = messages.get(0);
+				Message message = lastMessage.get();
 				lastMessageContent = message.getContent();
 				lastMessageSenderId = message.getSender() == user ?  id : contact.getContactId();
 				lastMessageTimestamp = message.getCreatedAt();
 			}
 			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContactId()));
-			System.out.println(simpUser);
 			boolean isActive;
 			if ( simpUser != null) {
 				isActive = simpUser.hasSessions();
@@ -67,7 +64,7 @@ public class ContactService {
 			return new ContactDTO.Contact(
 					contact.getContactId(),
 					contact.getContactUsername(),
-					messageService.countMessagesBetweenUsers(user, contact.getContactId()),
+					messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contact.getContactId(), user),
 					lastMessageContent,
 					lastMessageSenderId,
 					isActive,

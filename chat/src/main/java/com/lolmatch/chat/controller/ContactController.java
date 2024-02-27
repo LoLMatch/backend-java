@@ -24,6 +24,7 @@ public class ContactController {
 	@GetMapping()
 	@PreAuthorize("#id.toString() == #principal.name.toString()")
 	public ContactDTO getContactsOfUser(@RequestParam("id")UUID id, Principal principal){
+		log.info("Get contacts request, details: id - " + id + ", principal - " + principal.toString());
 		return contactService.getContactListForUser(id);
 	}
 }

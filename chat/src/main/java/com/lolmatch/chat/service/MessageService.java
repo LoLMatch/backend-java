@@ -6,19 +6,14 @@ import com.lolmatch.chat.dto.IncomingMessageDTO;
 import com.lolmatch.chat.dto.MessageDTO;
 import com.lolmatch.chat.dto.MessageReadDTO;
 import com.lolmatch.chat.entity.Message;
-import com.lolmatch.chat.entity.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,45 +25,18 @@ public class MessageService {
 	
 	private final UserService userService;
 	
-	private final EntityManager entityManager;
-	
-	public FetchMessagesDTO getListOfMessages(UUID firstId, UUID secondId, Optional<Integer> size, Optional<Integer> page) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Message> criteriaQuery = criteriaBuilder.createQuery(Message.class);
-		Root<Message> messageRoot = criteriaQuery.from(Message.class);
-		
-		Predicate senderIdPredicate = criteriaBuilder.equal(messageRoot.get("sender").get("id"), firstId);
-		Predicate recipientIdPredicate = criteriaBuilder.equal(messageRoot.get("recipient").get("id"), secondId);
-		Predicate firstAndPredicate = criteriaBuilder.and(senderIdPredicate, recipientIdPredicate);
-		
-		Predicate secondSenderIdPredicate = criteriaBuilder.equal(messageRoot.get("sender").get("id"), secondId);
-		Predicate secondRecipientIdPredicate = criteriaBuilder.equal(messageRoot.get("recipient").get("id"), firstId);
-		Predicate secondAndPredicate = criteriaBuilder.and(secondSenderIdPredicate, secondRecipientIdPredicate);
-		
-		Predicate finalPredicate = criteriaBuilder.or(firstAndPredicate, secondAndPredicate);
-		// final predicate equals to (firstId AND secondId) OR (secondId AND firstId)
-		
-		criteriaQuery.where(finalPredicate);
-		criteriaQuery.orderBy(criteriaBuilder.desc(messageRoot.get("createdAt")));
-		Query query = entityManager.createQuery(criteriaQuery);
+	public FetchMessagesDTO getMessageListBetweenUsers(UUID firstId, UUID secondId, Optional<Integer> size, Optional<Integer> page) {
 		int pageNumber = page.orElse(0);
-		int sizeOfPage = size.orElse(20);
+		int pageSize = size.orElse(20);
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 		
-		query.setFirstResult((pageNumber) * sizeOfPage);
-		query.setMaxResults(sizeOfPage);
-		
-		List<Message> messages = query.getResultList();
-		
-		long totalMessages = Long.sum(
-				messageRepository.countAllBySenderIdAndRecipientId(firstId, secondId),
-				messageRepository.countAllBySenderIdAndRecipientId(secondId, firstId)
-		);
+		Page<Message> messagePage = messageRepository.getMessagesBetweenUsersPaged(firstId,secondId,pageable);
 		
 		return FetchMessagesDTO.builder()
-				.amount(sizeOfPage)
-				.page(pageNumber)
-				.messages(messages)
-				.totalMessages(totalMessages)
+				.amount(messagePage.getSize())
+				.page(messagePage.getNumber())
+				.messages(messagePage.getContent())
+				.totalMessages(messagePage.getTotalElements())
 				.build();
 	}
 	
@@ -87,30 +55,15 @@ public class MessageService {
 		return convertMessageToDto(message);
 	}
 	
-	public int countMessagesBetweenUsers(User user, UUID contactId){
-		return messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contactId, user);
-	}
-	
 	public MessageReadDTO setMessageRead(IncomingMessageDTO messageDTO) {
-		List<Message> messageList = messageRepository.findAllBySenderIdAndRecipientIdAndReadAtIsNull(
-				messageDTO.getSenderId(),
-				messageDTO.getRecipientId()
-		);
-		
-		messageList.stream().forEach(message -> {
-			if ( messageDTO.getTime() != null){
-				message.setReadAt(Timestamp.from(messageDTO.getTime()));
-			} else {
-				message.setReadAt(Timestamp.from(Instant.now()));
-			}
-			messageRepository.save(message);
-		});
-		Timestamp time;
+		final Timestamp time;
 		if ( messageDTO.getTime() == null){
 			time = Timestamp.from(Instant.now());
 		} else {
 			time = Timestamp.from(messageDTO.getTime());
 		}
+		messageRepository.setReadTimestamp(time, messageDTO.getSenderId(), messageDTO.getRecipientId());
+
 		return new MessageReadDTO(messageDTO.getSenderId(), messageDTO.getRecipientId(), time);
 	}
 	
