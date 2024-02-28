@@ -3,8 +3,8 @@ package com.lolmatch.chat.service;
 import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dto.FetchMessagesDTO;
 import com.lolmatch.chat.dto.IncomingMessageDTO;
-import com.lolmatch.chat.dto.MessageDTO;
 import com.lolmatch.chat.dto.MessageReadDTO;
+import com.lolmatch.chat.dto.OutgoingMessageDTO;
 import com.lolmatch.chat.entity.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +40,7 @@ public class MessageService {
 				.build();
 	}
 	
-	public MessageDTO saveMessage(IncomingMessageDTO incomingMessage) {
+	public OutgoingMessageDTO saveMessage(IncomingMessageDTO incomingMessage) {
 		Message message = new Message();
 		message.setSender(userService.getUserByUUID(incomingMessage.getSenderId()));
 		message.setRecipient(userService.getUserByUUID(incomingMessage.getRecipientId()));
@@ -50,9 +50,8 @@ public class MessageService {
 			message.setCreatedAt(Timestamp.from(Instant.now()));
 		}
 		message.setContent(incomingMessage.getContent());
-		message = messageRepository.save(message);
 		
-		return convertMessageToDto(message);
+		return convertMessageToDto(messageRepository.save(message));
 	}
 	
 	public MessageReadDTO setMessageRead(IncomingMessageDTO messageDTO) {
@@ -67,8 +66,8 @@ public class MessageService {
 		return new MessageReadDTO(messageDTO.getSenderId(), messageDTO.getRecipientId(), time);
 	}
 	
-	private MessageDTO convertMessageToDto(Message message){
-		return MessageDTO.builder()
+	private OutgoingMessageDTO convertMessageToDto(Message message){
+		return OutgoingMessageDTO.builder()
 				.id(message.getId())
 				.senderId(message.getSender().getId())
 				.recipientId(message.getRecipient().getId())

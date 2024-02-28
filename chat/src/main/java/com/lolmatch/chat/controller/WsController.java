@@ -1,7 +1,7 @@
 package com.lolmatch.chat.controller;
 
 import com.lolmatch.chat.dto.IncomingMessageDTO;
-import com.lolmatch.chat.dto.MessageDTO;
+import com.lolmatch.chat.dto.OutgoingMessageDTO;
 import com.lolmatch.chat.dto.MessageReadDTO;
 import com.lolmatch.chat.entity.Contact;
 import com.lolmatch.chat.service.ContactService;
@@ -38,7 +38,7 @@ public class WsController {
 		log.info("Incoming message on channel /app/chat, details: "  + message.toString());
 		switch ( message.getType()){
 			case SEND -> {
-				MessageDTO outgoingMessage = messageService.saveMessage(message);
+				OutgoingMessageDTO outgoingMessage = messageService.saveMessage(message);
 				messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getRecipientId()), outgoingMessage);
 			}
 			case MARK_READ -> {
