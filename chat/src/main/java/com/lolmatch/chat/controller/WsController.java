@@ -33,7 +33,11 @@ public class WsController {
 	private final ContactService contactService;
 	
 	@MessageMapping("/chat")
-	@PreAuthorize("#message.senderId.toString() == #principal.name.toString()")
+	@PreAuthorize("""
+	(#message.senderId.toString() == #principal.name.toString() && #message.type.toString() == 'SEND')
+	||
+	(#message.recipientId.toString() == #principal.name.toString() && #message.type.toString() == 'MARK_READ')
+	""")
 	public void processMessage(@Payload IncomingMessageDTO message, Principal principal) {
 		log.info("Incoming message on channel /app/chat, details: "  + message.toString());
 		switch ( message.getType()){
