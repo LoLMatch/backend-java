@@ -47,7 +47,7 @@ public class WsController {
 			}
 			case MARK_READ -> {
 				MessageReadDTO outgoingMessage = messageService.setMessageRead(message);
-				messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getRecipientId()), outgoingMessage);
+				messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getSenderId()), outgoingMessage);
 			}
 			default -> {
 				log.error("Wrong action type on incoming message: " + message);
