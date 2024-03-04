@@ -29,4 +29,7 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
 	
 	@Query(value = "SELECT m FROM Message m WHERE (m.sender.id = ?1 AND m.recipient.id = ?2) OR (m.sender.id = ?2 AND m.recipient.id = ?1) ORDER BY m.createdAt DESC LIMIT 1")
 	Optional<Message> getLastMessageBetweenUsers(UUID senderId, UUID recipientId);
+	
+	@Query(value = "SELECT m.createdAt FROM Message m WHERE m.sender.id = ?1 OR m.recipient.id = ?1 ORDER BY m.createdAt DESC LIMIT 1")
+	Optional<Timestamp> getLastMessageOfUser(UUID id);
 }

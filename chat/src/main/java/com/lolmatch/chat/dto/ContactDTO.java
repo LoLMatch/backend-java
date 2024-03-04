@@ -16,7 +16,7 @@ public class ContactDTO {
 	
 	private List<Contact> contacts;
 	
-	public record Contact (UUID contactId, String username, Integer unreadMessages, String lastMessage, UUID lastMessageSenderId, Boolean isActive, Timestamp lastMessageTimestamp){}
+	public record Contact (UUID contactId, String username, Integer unreadMessages, String lastMessage, UUID lastMessageSenderId, Boolean isActive, Timestamp lastActiveTimestamp, Timestamp lastMessageTimestamp){}
 }
 
 

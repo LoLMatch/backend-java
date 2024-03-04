@@ -44,6 +44,7 @@ public class WsController {
 			case SEND -> {
 				OutgoingMessageDTO outgoingMessage = messageService.saveMessage(message);
 				messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getRecipientId()), outgoingMessage);
+				messagingTemplate.convertAndSend("/topic/chat"+String.valueOf(outgoingMessage.getSenderId()), outgoingMessage);
 			}
 			case MARK_READ -> {
 				MessageReadDTO outgoingMessage = messageService.setMessageRead(message);

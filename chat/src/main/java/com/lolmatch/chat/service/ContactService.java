@@ -56,10 +56,16 @@ public class ContactService {
 			}
 			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContactId()));
 			boolean isActive;
+			Timestamp lastActiveTimestamp;
 			if ( simpUser != null) {
 				isActive = simpUser.hasSessions();
 			} else {
 				isActive = false;
+			}
+			if ( isActive){
+				lastActiveTimestamp = null;
+			} else {
+				lastActiveTimestamp = messageRepository.getLastMessageOfUser(id).orElse(null);
 			}
 			return new ContactDTO.Contact(
 					contact.getContactId(),
@@ -68,6 +74,7 @@ public class ContactService {
 					lastMessageContent,
 					lastMessageSenderId,
 					isActive,
+					lastActiveTimestamp,
 					lastMessageTimestamp);
 		}).collect(Collectors.toList());
 		dto.setContacts(contacts);
