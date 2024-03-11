@@ -1,9 +1,10 @@
-variable "project_id" {}
+variable "project" {}
 variable "location" {}
 variable "cluster_name" {}
+variable "machine_type" {}
 
 provider "google" {
-  project = var.project_id
+  project = var.project
   region  = var.location
 }
 
@@ -29,7 +30,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     disk_type    = "pd-standard"
 
     preemptible  = true
-    machine_type = "e2-small"
+    machine_type = var.machine_type
 
   }
 }
