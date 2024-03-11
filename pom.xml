@@ -30,6 +30,7 @@
         <module>api-gateway</module>
         <module>keycloak</module>
         <module>chat</module>
+        <module>calendar</module>
     </modules>
 
     <dependencyManagement>
