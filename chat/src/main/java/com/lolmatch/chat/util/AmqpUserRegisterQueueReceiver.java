@@ -16,18 +16,18 @@ import org.springframework.amqp.core.Queue;
 @RequiredArgsConstructor
 public class AmqpUserRegisterQueueReceiver {
 	
-	private final String queueName = "user-register-queue";
+	private final String queueName = "user-register-queue-chat";
 	
 	private final UserService userService;
 	
 	@Bean
 	public Queue myQueue() {
-		return new Queue(queueName, false);
+		return new Queue(queueName, true);
 	}
 	
 	@RabbitListener(queues = queueName)
 	public void listen(String in) throws JsonProcessingException {
-		log.info("Message from user-register-queue: " + in);
+		log.info("Message from user-register-queue-chat: " + in);
 		ObjectMapper objectMapper = new ObjectMapper();
 		UserDTO userDTO = objectMapper.readValue(in, UserDTO.class);
 		
