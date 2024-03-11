@@ -1,6 +1,6 @@
 spring:
     datasource:
-        url: jdbc:postgresql://database:5432/keycloak
+        url: jdbc:postgresql://keycloak-database:5432/keycloak
         username: postgres
         password: postgres
         driver-class-name: org.postgresql.Driver

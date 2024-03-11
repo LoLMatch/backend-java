@@ -5,20 +5,19 @@ on:
       environment:
         description: "Environment to be used"
         required: true
-        type: choice
-        options:
-          - production
-          - development
+        type: environment
 
 jobs:
   build:
     uses: ./.github/workflows/build_and_push.yaml
+    secrets: inherit
 
   provision:
     uses: ./.github/workflows/infrastructure_provision.yaml
     with:
       environment: ${{ inputs.environment }}
-  
+    secrets: inherit
+
   deploy:
     needs: [build, provision]
     uses: ./.github/workflows/apply_chart.yaml

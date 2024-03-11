@@ -1,6 +1,4 @@
-# environments/development/variables.tf
-
-variable "project_id" {
+variable "project" {
   description = "The project ID in GCP."
 }
 
