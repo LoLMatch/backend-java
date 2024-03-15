@@ -37,6 +37,25 @@ services:
     healthcheck:
       test: "pg_isready -U postgres"
 
+  db-chat:
+    build:
+      context: .
+      dockerfile: database/Dockerfile
+    image: postgres:${TAG}
+    container_name: "chat-database"
+    platform: ${PLATFORM}
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=chat
+    ports:
+      - "5434:5432"
+    networks:
+      - network
+    healthcheck:
+      test: "pg_isready -U postgres"
+
+
   rabbitmq:
     build:
       context: .
@@ -127,7 +146,7 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      db-keycloak:
+      db-chat:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy

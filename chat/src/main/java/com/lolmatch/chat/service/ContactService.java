@@ -1,6 +1,7 @@
 package com.lolmatch.chat.service;
 
 import com.lolmatch.chat.dao.ContactRepository;
+import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dto.ContactDTO;
 import com.lolmatch.chat.entity.Contact;
 import com.lolmatch.chat.entity.Message;
@@ -10,6 +11,7 @@ import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,7 +25,7 @@ public class ContactService {
 	
 	private final UserService userService;
 	
-	private final MessageService messageService;
+	private final MessageRepository messageRepository;
 	
 	private final SimpUserRegistry simpUserRegistry;
 	
@@ -37,36 +39,43 @@ public class ContactService {
 		ContactDTO dto = new ContactDTO();
 		dto.setUser(user);
 		List<ContactDTO.Contact> contacts = contactsFromDb.stream().map(contact -> {
-			List<Message> messages = messageService.getListOfMessages(
-					id,
-					contact.getContactId(),
-					Optional.of(1),
-					Optional.of(0)).getMessages();
+			Optional<Message> lastMessage = messageRepository.getLastMessageBetweenUsers(id, contact.getContactId());
+			
 			String lastMessageContent;
 			UUID lastMessageSenderId;
-			if ( messages.isEmpty()){
+			Timestamp lastMessageTimestamp;
+			if ( lastMessage.isEmpty()){
 				lastMessageContent = "";
 				lastMessageSenderId = null;
+				lastMessageTimestamp = null;
 			} else {
-				Message message = messages.get(0);
+				Message message = lastMessage.get();
 				lastMessageContent = message.getContent();
 				lastMessageSenderId = message.getSender() == user ?  id : contact.getContactId();
+				lastMessageTimestamp = message.getCreatedAt();
 			}
 			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContactId()));
-			System.out.println(simpUser);
-			Boolean isActive;
+			boolean isActive;
+			Timestamp lastActiveTimestamp;
 			if ( simpUser != null) {
 				isActive = simpUser.hasSessions();
 			} else {
 				isActive = false;
 			}
+			if ( isActive){
+				lastActiveTimestamp = null;
+			} else {
+				lastActiveTimestamp = messageRepository.getLastMessageOfUser(id).orElse(null);
+			}
 			return new ContactDTO.Contact(
 					contact.getContactId(),
 					contact.getContactUsername(),
-					messageService.countMessagesBetweenUsers(user, contact.getContactId()),
+					messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contact.getContactId(), user),
 					lastMessageContent,
 					lastMessageSenderId,
-					isActive);
+					isActive,
+					lastActiveTimestamp,
+					lastMessageTimestamp);
 		}).collect(Collectors.toList());
 		dto.setContacts(contacts);
 		

@@ -1,22 +1,19 @@
 package com.lolmatch.chat.controller;
 
 import com.lolmatch.chat.dto.IncomingMessageDTO;
-import com.lolmatch.chat.dto.MessageDTO;
-import com.lolmatch.chat.dto.UserStatusChangeDTO;
+import com.lolmatch.chat.dto.OutgoingMessageDTO;
+import com.lolmatch.chat.dto.MessageReadDTO;
 import com.lolmatch.chat.entity.Contact;
 import com.lolmatch.chat.service.ContactService;
 import com.lolmatch.chat.service.MessageService;
-import com.lolmatch.chat.service.UserService;
-import com.lolmatch.chat.util.ActionTypeEnum;
 import com.lolmatch.chat.util.UserStatusChangeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -36,24 +33,27 @@ public class WsController {
 	private final ContactService contactService;
 	
 	@MessageMapping("/chat")
+	@PreAuthorize("""
+	(#message.senderId.toString() == #principal.name.toString() && #message.type.toString() == 'SEND')
+	||
+	(#message.recipientId.toString() == #principal.name.toString() && #message.type.toString() == 'MARK_READ')
+	""")
 	public void processMessage(@Payload IncomingMessageDTO message, Principal principal) {
-		if ( principal == null) {
-			log.warn("Unauthenticated user tried to send message: " + message.toString());
-			throw new AccessDeniedException("Unauthenticated user tried to send message: " + message.toString());
-		}
-		if ( !principal.getName().equals(message.getSenderId().toString())){
-			log.warn("Trying to send message from: " + principal.getName() + ", send as: " + message.getSenderId().toString());
-			throw new AccessDeniedException("Wrong user tried to send message: " + message.toString());
-		}
 		log.info("Incoming message on channel /app/chat, details: "  + message.toString());
-		if( message.getType() == ActionTypeEnum.SEND){
-			MessageDTO outgoingMessage = messageService.saveMessage(message);
-			messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getRecipientId()), outgoingMessage);
-		} else if ( message.getType() == ActionTypeEnum.MARK_READ){
-			messageService.setMessageRead(message);
-		} else {
-			log.error("Wrong action type on incoming message: " + message.toString());
-			throw new IllegalStateException("Wrong action type on incoming message - " + message.getType());
+		switch ( message.getType()){
+			case SEND -> {
+				OutgoingMessageDTO outgoingMessage = messageService.saveMessage(message);
+				messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getRecipientId()), outgoingMessage);
+				messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getSenderId()), outgoingMessage);
+			}
+			case MARK_READ -> {
+				MessageReadDTO outgoingMessage = messageService.setMessageRead(message);
+				messagingTemplate.convertAndSend("/topic/chat/"+String.valueOf(outgoingMessage.getSenderId()), outgoingMessage);
+			}
+			default -> {
+				log.error("Wrong action type on incoming message: " + message);
+				throw new IllegalStateException("Wrong action type on incoming message - " + message.getType());
+			}
 		}
 	}
 	
