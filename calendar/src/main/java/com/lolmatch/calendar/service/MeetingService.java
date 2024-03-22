@@ -23,12 +23,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.lolmatch.calendar.model.status.MeetingStatus.CANNOT_FIND_ALL_PARTICIPANTS;
 import static com.lolmatch.calendar.model.status.MeetingStatus.SUCCESS;
 import static com.lolmatch.calendar.model.status.PresentStatus.NOT_FOUND;
+import static java.lang.Boolean.TRUE;
 
 @Slf4j
 @Service
@@ -38,6 +40,7 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingValidator meetingValidator;
     private final MeetingMapper meetingMapper;
+    private final NotificationService notificationService;
 
     private final ApplicationAuditAware audit;
 
@@ -46,14 +49,24 @@ public class MeetingService {
         if (!meetingStatus.isCorrect()) {
             return new MeetingScheduleResponse(meetingStatus);
         }
-
         try {
             final UUID createdMeeting = meetingRepository.save(meetingMapper.mapOf(meeting)).getId();
+            notifyAllParticipants(meeting.getParticipants(), meeting, createdMeeting);
             return new MeetingScheduleResponse(SUCCESS, createdMeeting);
         } catch (MeetingScheduleError error) {
             return new MeetingScheduleResponse(CANNOT_FIND_ALL_PARTICIPANTS, error.getMessage());
         } catch (Exception e) {
             throw new MeetingScheduleError("Unexpected error, scheduling meeting failed, check database connection " + e);
+        }
+    }
+
+    private void notifyAllParticipants(List<UUID> usersThatShouldBeNotified,
+                                       MeetingScheduleRequest meetingsDetails,
+                                       UUID meetingUUID) {
+        if (Objects.nonNull(meetingsDetails.getShouldNotify()) && TRUE.equals(meetingsDetails.getShouldNotify())) {
+            usersThatShouldBeNotified.forEach(user -> notificationService.notifyUser(user, meetingsDetails, meetingUUID));
+        } else {
+            log.info("Notifications was not send, lack of shouldNotify or declared to false");
         }
     }
 
@@ -89,7 +102,6 @@ public class MeetingService {
         }
 
         final List<MeetingEntity> meetings = meetingRepository.findAllMeetingsByPeriodAndCreator(startTime, endTime, currentUser);
-
         return new MeetingsResponse(SUCCESS, interval, meetings);
     }
 
