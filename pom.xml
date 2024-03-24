@@ -20,7 +20,7 @@
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <keycloak.version>23.0.6</keycloak.version>
+        <keycloak.version>24.0.1</keycloak.version>
         <rabbitmq.version>5.20.0</rabbitmq.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
     </properties>
