@@ -26,6 +26,7 @@
     </properties>
 
     <modules>
+        <module>teams</module>
         <module>api-gateway</module>
         <module>keycloak</module>
         <module>chat</module>
