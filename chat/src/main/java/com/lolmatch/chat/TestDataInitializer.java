@@ -7,6 +7,7 @@ import com.lolmatch.chat.entity.Contact;
 import com.lolmatch.chat.entity.Message;
 import com.lolmatch.chat.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Profile({"local", "dev"})
 public class TestDataInitializer {
 	
 	private final UserRepository userRepository;

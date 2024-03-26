@@ -139,6 +139,8 @@ services:
     platform: ${PLATFORM}
     container_name: "chat-service"
     image: chat-service:${TAG}
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     ports:
       - '8081:8080'
     networks:
