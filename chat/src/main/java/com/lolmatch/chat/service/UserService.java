@@ -16,10 +16,6 @@ public class UserService {
 	
 	private final UserRepository userRepository;
 	
-	public String getUsernameByUUID(UUID id) {
-		return null;
-	}
-	
 	public User getUserByUUID(UUID id){
 		Optional<User> user =  userRepository.findById(id);
 		if ( user.isEmpty()){
@@ -29,11 +25,11 @@ public class UserService {
 		}
 	}
 	
-	public User saveUserFromDTO(UserDTO userDTO){
+	public void saveUserFromDTO(UserDTO userDTO){
 		User user = new User();
 		user.setId(userDTO.getId());
 		user.setUsername(userDTO.getUsername());
 		
-		return userRepository.save(user);
+		userRepository.save(user);
 	}
 }

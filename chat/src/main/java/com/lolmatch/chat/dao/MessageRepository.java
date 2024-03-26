@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,4 +33,15 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
 	
 	@Query(value = "SELECT m.createdAt FROM Message m WHERE m.sender.id = ?1 OR m.recipient.id = ?1 ORDER BY m.createdAt DESC LIMIT 1")
 	Optional<Timestamp> getLastMessageOfUser(UUID id);
+	
+	Page<Message> findAllByGroupRecipientIdOrderByCreatedAtDesc(UUID groupRecipientId, Pageable pageable);
+	
+	@Query(value = "SELECT m FROM Message m WHERE m.groupRecipient.id = ?1 ORDER BY m.createdAt DESC LIMIT 1")
+	Optional<Message> getLastMessageInGroup(UUID groupId);
+	
+	@Query(value = "SELECT COUNT(m) FROM Message m LEFT JOIN ReadStatus r ON r.message = m AND r.userId = ?1 WHERE m.groupRecipient.id = ?2 AND r.id IS NULL")
+	int countAllUnreadByUserIdAndGroupId(UUID userId, UUID groupId);
+	
+	@Query(value = "SELECT m FROM Message m LEFT JOIN ReadStatus r ON r.message = m AND r.userId = ?1 WHERE m.groupRecipient.id = ?2 AND r.id IS NULL")
+	List<Message> findAllGroupMessagesUnreadByUserIdAndGroupId(UUID userId, UUID groupId);
 }

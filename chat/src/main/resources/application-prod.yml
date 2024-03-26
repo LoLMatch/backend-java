@@ -1,0 +1,27 @@
+spring:
+    datasource:
+        url: jdbc:postgresql://database:5432/keycloak
+        username: postgres
+        password: postgres
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                default_schema: public
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+    jackson:
+        deserialization:
+            fail-on-unknown-properties: false
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://keycloak:8443/realms/lolmatch
+    rabbitmq:
+        addresses: rabbitmq
+        username: guest
+        password: guest
