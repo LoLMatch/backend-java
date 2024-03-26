@@ -1,7 +1,7 @@
 package com.lolmatch.chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,19 +14,19 @@ import java.util.UUID;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class User {
-	
 	@Id
 	@Column(name = "id")
 	private UUID id;
-
+	
 	@Column(name = "username")
 	private String username;
 	
-	@JsonIgnore
-	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-	private Set<Group> groups;
+	@ManyToOne
+	@JsonManagedReference
+	@JoinColumn(name = "group_id")
+	private Group group;
 	
 	@JsonBackReference
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

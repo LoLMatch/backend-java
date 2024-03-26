@@ -1,9 +1,8 @@
 package com.lolmatch.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 import java.util.UUID;
@@ -11,26 +10,25 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
-@Table(name = "group")
+@AllArgsConstructor
+@Table(name = "groups")
 public class Group {
-	
 	@Id
 	@Column(name = "id")
-	@GeneratedValue( strategy = GenerationType.UUID)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
 	@Column(name = "name")
 	private String name;
 	
-	@ManyToMany
-	@JoinTable(
-			name = "user_group_t",
-			joinColumns = @JoinColumn(name = "group_id"),
-			inverseJoinColumns = @JoinColumn(name = "user_id")
-	)
+	@JsonBackReference
+	@OneToMany
 	private Set<User> users;
 	
-	@OneToMany(mappedBy = "groupRecipientId")
+	@JsonBackReference
+	@OneToMany(mappedBy = "groupRecipient")
 	private Set<Message> groupMessages;
+
 }

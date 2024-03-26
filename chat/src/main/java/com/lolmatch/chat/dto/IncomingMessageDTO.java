@@ -4,7 +4,6 @@ import com.lolmatch.chat.util.ActionTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
 

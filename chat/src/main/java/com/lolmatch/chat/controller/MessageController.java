@@ -25,7 +25,7 @@ public class MessageController {
 	@PreAuthorize("#firstUserId.toString() == #principal.name.toString() || #secondUserId.toString() == #principal.name.toString()")
 	public FetchMessagesDTO getMessages(
 			@RequestParam("firstUserId") UUID firstUserId,
-			@RequestParam("secondUserId") UUID secondUserId,
+			@RequestParam("secondUserId") UUID secondUserId, // if looking for group messages this is group id
 			@RequestParam("size") Optional<Integer> size,
 			@RequestParam("page") Optional<Integer> page,
 			Principal principal

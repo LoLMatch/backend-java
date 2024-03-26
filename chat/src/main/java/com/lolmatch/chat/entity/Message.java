@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -13,7 +14,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "message")
+@Table(name = "messages", indexes = {
+		@Index(name = "idx_message_sender_id", columnList = "sender_id, recipient_id")
+})
 public class Message {
 	
 	@Id
@@ -41,11 +44,14 @@ public class Message {
 	private User recipient;
 	
 	@ManyToOne
+	@JsonManagedReference
 	@JoinColumn(name = "group_recipient_id")
-	private Group groupRecipientId;
+	private Group groupRecipient;
 	
 	@OneToOne
 	@JoinColumn(name = "parent_message_id", referencedColumnName = "id")
 	private Message parentMessage;
 	
+	@OneToMany(mappedBy = "message")
+	private List<ReadStatus> readStatuses;
 }
