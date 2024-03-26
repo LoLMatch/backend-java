@@ -1,3 +1,4 @@
+# do odpalania lokalnie poza docker compose
 spring:
     datasource:
         url: jdbc:postgresql://localhost:5435/teams

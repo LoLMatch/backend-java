@@ -1,3 +1,4 @@
+# do odpalania w docker-compose
 spring:
     datasource:
         url: jdbc:postgresql://teams-database:5432/teams

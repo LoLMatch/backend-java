@@ -3,6 +3,7 @@ package com.lolmatch.teams;
 import com.lolmatch.teams.user.User;
 import com.lolmatch.teams.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Profile({"local","dev"})
 public class TestDataInitializer {
 	
 	private final UserRepository userRepository;
