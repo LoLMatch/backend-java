@@ -1,3 +1,4 @@
+# konfiguracja do testów lokalnych - nie w kontenerze
 spring:
     datasource:
         url: jdbc:postgresql://localhost:5434/chat

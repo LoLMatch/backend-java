@@ -1,3 +1,4 @@
+# konfiguracja do odpalania w docker-compose lokalnie
 spring:
     application:
         name: chat
