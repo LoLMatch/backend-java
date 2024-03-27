@@ -21,9 +21,9 @@ public class WsController {
 	
 	@MessageMapping("/chat")
 	@PreAuthorize("""
-	(#message.senderId.toString() == #principal.name.toString() && #message.type.toString() == 'SEND')
+	(#message.senderId.toString() == #principal.name.toString() && (#message.type.toString() == 'SEND' || #message.type.toString() == 'SEND_GROUP'))
 	||
-	(#message.recipientId.toString() == #principal.name.toString() && #message.type.toString() == 'MARK_READ')
+	(#message.recipientId.toString() == #principal.name.toString() && (#message.type.toString() == 'MARK_READ' || #message.type.toString() == "MARK_READ_GROUP"))
 	""")
 	public void processMessage(@Payload IncomingMessageDTO message, Principal principal) {
 		log.info("Incoming message on channel /app/chat, details: "  + message.toString());
