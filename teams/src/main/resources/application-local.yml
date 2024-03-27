@@ -1,5 +1,7 @@
 # do odpalania lokalnie poza docker compose
 spring:
+    application:
+        name: teams-service
     datasource:
         url: jdbc:postgresql://localhost:5435/teams
         username: postgres
@@ -28,3 +30,5 @@ spring:
         password: guest
 server:
     port: 8090
+    servlet:
+        context-path: /api/teams

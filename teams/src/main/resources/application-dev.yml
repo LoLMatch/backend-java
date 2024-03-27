@@ -1,5 +1,7 @@
 # do odpalania w docker-compose
 spring:
+    application:
+        name: teams-service
     datasource:
         url: jdbc:postgresql://teams-database:5432/teams
         username: postgres
@@ -26,3 +28,6 @@ spring:
         addresses: rabbitmq
         username: guest
         password: guest
+server:
+    servlet:
+        context-path: /api/teams
