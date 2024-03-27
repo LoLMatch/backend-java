@@ -81,7 +81,14 @@
       "vhost": "/",
       "arguments": {}
     },
-    {
+    {  
+      "name": "user-register-queue-teams",
+      "durable": true,
+      "auto_delete": false,
+      "vhost": "/",
+      "arguments": {}
+    },
+    {  
       "name": "user-register-queue-python",
       "durable": true,
       "auto_delete": false,
@@ -113,6 +120,14 @@
       "source": "user-register-exchange",
       "vhost": "/",
       "destination": "user-register-queue-chat",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "user-register-exchange",
+      "vhost": "/",
+      "destination": "user-register-queue-teams",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}

@@ -55,6 +55,23 @@ services:
     healthcheck:
       test: "pg_isready -U postgres"
 
+  db-teams:
+    build:
+      context: .
+      dockerfile: database/Dockerfile
+    image: postgres:${TAG}
+    container_name: "teams-database"
+    platform: ${PLATFORM}
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=teams
+    ports:
+      - "5435:5432"
+    networks:
+      - network
+    healthcheck:
+      test: "pg_isready -U postgres"
 
   rabbitmq:
     build:
@@ -147,6 +164,27 @@ services:
       keycloak:
         condition: service_healthy
       db-chat:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  teams-service:
+    build:
+      context: .
+      dockerfile: teams/Dockerfile
+    platform: ${PLATFORM}
+    container_name: "teams-service"
+    image: teams-service:${TAG}
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - '8082:8080'
+    networks:
+      - network
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      db-teams:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
