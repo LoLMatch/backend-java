@@ -80,6 +80,13 @@
       "auto_delete": false,
       "vhost": "/",
       "arguments": {}
+    },
+    {
+      "name": "user-register-queue-python",
+      "durable": true,
+      "auto_delete": false,
+      "vhost": "/",
+      "arguments": {}
     }
   ],
   "exchanges": [
@@ -106,6 +113,14 @@
       "source": "user-register-exchange",
       "vhost": "/",
       "destination": "user-register-queue-chat",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "user-register-exchange",
+      "vhost": "/",
+      "destination": "user-register-queue-python",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}
