@@ -6,8 +6,8 @@ module "kubernetes" {
   project      = var.project
   location     = var.location
   cluster_name = format("%s%s", basename(abspath(path.cwd)), "-main")
-  node_count   = 1
-  machine_type = "e2-small"
+  node_count   = 3
+  machine_type = "e2-medium"
 }
 
 terraform {

@@ -4,8 +4,12 @@ variable "project" {
 
 variable "location" {
   description = "The location (region or zone) for the cluster."
-  default     = "europe-central2"
+  default     = "europe-central2-a"
 }
+
+# variable "region" {
+
+# }
 
 variable "cluster_name" {
   description = "The name of the cluster."

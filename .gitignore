@@ -41,3 +41,4 @@ build/
 ### terraform ###
 *.terraform*
 *.tfstate*
+*.tfvars*
