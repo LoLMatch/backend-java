@@ -1,9 +1,11 @@
 package com.lolmatch.chat;
 
 import com.lolmatch.chat.dao.ContactRepository;
+import com.lolmatch.chat.dao.GroupRepository;
 import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dao.UserRepository;
 import com.lolmatch.chat.entity.Contact;
+import com.lolmatch.chat.entity.Group;
 import com.lolmatch.chat.entity.Message;
 import com.lolmatch.chat.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class TestDataInitializer {
 	
 	private final UserRepository userRepository;
 	private final ContactRepository contactRepository;
-	
+	private final GroupRepository groupRepository;
 	private final MessageRepository messageRepository;
 	
 	public void initUsers(){
@@ -51,6 +53,16 @@ public class TestDataInitializer {
 		createMessage(rob, bob, "no content");
 		createMessage(bob, rob, "message2");
 		createMessage(rob, ash, "some message");
+		
+		Group group = new Group();
+		group.setName("best team");
+		group.setId(UUID.randomUUID());
+		groupRepository.save(group);
+		
+		bob.setGroup(group);
+		rob.setGroup(group);
+		userRepository.save(bob);
+		userRepository.save(rob);
 	}
 	
 	private void createContact(User first, User second) {

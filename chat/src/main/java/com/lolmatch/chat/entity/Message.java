@@ -35,7 +35,7 @@ public class Message {
 	
 	@ManyToOne
 	@JsonManagedReference
-	@JoinColumn(name = "sender_id", nullable = false)
+	@JoinColumn(name = "sender_id")
 	private User sender;
 	
 	@ManyToOne
@@ -52,6 +52,7 @@ public class Message {
 	@JoinColumn(name = "parent_message_id", referencedColumnName = "id")
 	private Message parentMessage;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "message")
 	private List<ReadStatus> readStatuses;
 }

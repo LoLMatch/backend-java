@@ -1,5 +1,6 @@
 package com.lolmatch.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class ReadStatus {
 	private Timestamp readAt;
 	
 	@ManyToOne
+	@JsonBackReference
 	@JoinColumn(name = "group_id")
 	private Message message;
 }

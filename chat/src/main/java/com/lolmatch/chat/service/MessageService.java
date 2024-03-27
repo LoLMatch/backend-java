@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -87,6 +88,7 @@ public class MessageService {
 	public void saveMessageGroup(IncomingMessageDTO incomingMessage) {
 		Group group = groupRepository.findById(incomingMessage.getRecipientId()).orElseThrow(() -> new EntityNotFoundException("No group found"));
 		Message message = new Message();
+		message.setSender(userRepository.getReferenceById(incomingMessage.getSenderId()));
 		message.setGroupRecipient(group);
 		message.setCreatedAt(setTime(incomingMessage));
 		message.setContent(incomingMessage.getContent());
@@ -106,7 +108,7 @@ public class MessageService {
 	@Transactional
 	public void setMessageReadGroup(IncomingMessageDTO incomingMessage) {
 		Timestamp time = setTime(incomingMessage);
-		// zapytanie poniżej powinno znaleźć wszystkie wiadomości grupy które nie zostały odczytane przez danego użytkownika
+		// zapytanie poniżej powinno znaleźć wszystkie wiadomości grupy, które nie zostały odczytane przez danego użytkownika
 		List<Message> unreadMessages = messageRepository.findAllGroupMessagesUnreadByUserIdAndGroupId(incomingMessage.getRecipientId(), incomingMessage.getSenderId());
 		for ( Message unreadMessage: unreadMessages){
 			ReadStatus readStatus = new ReadStatus();
@@ -117,7 +119,7 @@ public class MessageService {
 			readStatusRepository.save(readStatus);
 		}
 		// send info to all other users that all messages have been read
-		Group group = groupRepository.findById(incomingMessage.getRecipientId()).orElseThrow(() -> new EntityNotFoundException("No group found"));
+		Group group = groupRepository.findById(incomingMessage.getSenderId()).orElseThrow(() -> new EntityNotFoundException("No group found"));
 		group.getUsers().forEach(user -> {
 			SimpUser simpUser = userRegistry.getUser(user.getId().toString());
 			if (simpUser != null && simpUser.hasSessions() && !user.getId().equals(incomingMessage.getRecipientId())) {
@@ -128,10 +130,16 @@ public class MessageService {
 	}
 	
 	private OutgoingMessageDTO convertMessageToDto(Message message) {
+		UUID recipientId;
+		if (message.getRecipient() == null){
+			recipientId = message.getGroupRecipient().getId();
+		} else {
+			recipientId = message.getRecipient().getId();
+		}
 		return OutgoingMessageDTO.builder()
 				.id(message.getId())
 				.senderId(message.getSender().getId())
-				.recipientId(message.getRecipient().getId())
+				.recipientId(recipientId)
 				.readAt(message.getReadAt())
 				.createdAt(message.getCreatedAt())
 				.content(message.getContent())
@@ -144,6 +152,9 @@ public class MessageService {
 	}
 	
 	private List<ReadStatusDTO> convertReadStatusDtoList(List<ReadStatus> list){
+		if (list == null){
+			return Collections.emptyList();
+		}
 		return list.stream().map(this::convertReadStatusToDto).toList();
 	}
 	

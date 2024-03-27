@@ -160,7 +160,7 @@ public class ContactService {
 			if ( a.lastMessageTimestamp() == null || b.lastMessageTimestamp() == null){
 				return 0;
 			}
-			return a.lastMessageTimestamp().compareTo(b.lastMessageTimestamp());
+			return b.lastMessageTimestamp().compareTo(a.lastMessageTimestamp());
 		});
 		dto.setContacts(contacts);
 		
