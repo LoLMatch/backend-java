@@ -47,7 +47,7 @@ jobs:
     - name: Terraform plan
       continue-on-error: true
       run: |
-        terraform -chdir=${{ env.PATH_TO_TF }} plan -out=${{ env.TF_PLAN }} -var "project=${{ secrets.GCP_PROJECT_ID }}"
+        terraform -chdir=${{ env.PATH_TO_TF }} plan -out=${{ env.TF_PLAN }} -var "project=${{ secrets.GCP_PROJECT_ID }}" --var-file=.tfvars
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4        
@@ -60,5 +60,5 @@ jobs:
       continue-on-error: true
 
     - name: Terraform apply
-      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -auto-approve -var "project=${{ secrets.GCP_PROJECT_ID }}"
+      run: terraform -chdir=${{ env.PATH_TO_TF }} apply ${{ env.TF_PLAN }}
 
