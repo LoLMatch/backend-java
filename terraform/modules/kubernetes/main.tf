@@ -14,7 +14,7 @@ resource "google_container_cluster" "primary" {
   deletion_protection      = false
 }
 
-resource "google_container_node_pool" "primary_preemptible_nodes" {
+resource "google_container_node_pool" "node_pool" {
   name     = "node-pool"
   location = var.location
 
@@ -27,6 +27,30 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
     preemptible  = true
     machine_type = var.machine_type
+  }
+}
+
+resource "google_container_node_pool" "database_node_pool" {
+  name     = "node-pool-db"
+  location = var.location
+
+  cluster    = google_container_cluster.primary.name
+  node_count = 1
+
+  node_config {
+    disk_size_gb = 10
+    disk_type    = "pd-standard"
+
+    preemptible  = true
+    machine_type = var.machine_type
+    labels = {
+      role = "database"
+    }
+    taint {
+      key    = "database"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }
   }
 }
 
