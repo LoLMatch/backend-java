@@ -3,7 +3,7 @@ spring:
     application:
         name: teams-service
     datasource:
-        url: jdbc:postgresql://database-service:5432/teams
+        url: jdbc:postgresql://database:5432/teams
         username: teams
         password: teams
         driver-class-name: org.postgresql.Driver

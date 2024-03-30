@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teams
+spec:
+  selector:
+    matchLabels:
+      app: teams
+  template:
+    metadata:
+      labels:
+        app: teams
+    spec:
+      containers:
+        - name: teams
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/teams-service:lolmatch
+          envFrom:
+            - configMapRef:
+                name: teams-cm
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teams
+spec:
+  selector:
+    app: teams
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: teams-cm
+data:
+  SPRING_PROFILES_ACTIVE: prod

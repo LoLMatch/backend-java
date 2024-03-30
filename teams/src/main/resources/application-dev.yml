@@ -26,8 +26,8 @@ spring:
                     issuer-uri: http://keycloak:8443/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
-        username: guest
-        password: guest
+        username: admin
+        password: password
 server:
     servlet:
         context-path: /api/teams

@@ -15,6 +15,11 @@ spec:
     spec:
       nodeSelector:
         role: database
+      tolerations:
+        - key: database
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
       containers:
         - name: postgres
           image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/postgres:lolmatch
@@ -25,9 +30,15 @@ spec:
               mountPath: /var/lib/postgresql/data
           env:
             - name: POSTGRES_PASSWORD
-              value: postgres
-            - name: POSTGRES_DB
-              value: keycloak
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
       volumes:
@@ -64,7 +75,6 @@ metadata:
   name: postgres-credentials
 type: Opaque
 data:
-  database: a2V5Y2xvYWsK
   username: cG9zdGdyZXMK
   password: cG9zdGdyZXMK
 ---

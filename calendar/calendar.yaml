@@ -1,6 +1,7 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: calendar
   labels:
     app: calendar
 spec:
@@ -11,15 +12,16 @@ spec:
     metadata:
       labels:
         app: calendar
-    containers:
-      - name: calendar
-        image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/calendar:lolmatch
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "250m"
-        ports:
-          - containerPort: 8888
+    spec:
+      containers:
+        - name: calendar
+          imagePullPolicy: Always
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/calendar:lolmatch
+          envFrom:
+            - configMapRef:
+                name: calendar-cm
+          ports:
+            - containerPort: 8888
 ---
 apiVersion: v1
 kind: Service
@@ -32,3 +34,10 @@ spec:
   ports:
     - port: 80
       targetPort: 8888
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calendar-cm
+data:
+  SPRING_PROFILES_ACTIVE: prod

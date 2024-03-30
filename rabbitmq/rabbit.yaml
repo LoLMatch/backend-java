@@ -18,10 +18,6 @@ spec:
       containers:
         - name: rabbitmq
           image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/rabbitmq:lolmatch
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/rabbitmq
-              readOnly: true
           resources:
             limits:
               memory: 512Mi
@@ -67,14 +63,5 @@ metadata:
   name: rabbitmq-credentials
 type: Opaque
 data:
-  user: Z3Vlc3QK
-  password: Z3Vlc3QK
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: rabbitmq-config
-data:
-  rabbitmq.conf: |
-    loopback_users = none
-    log.console = true
+  user: YWRtaW4K
+  password: cGFzc3dvcmQK
