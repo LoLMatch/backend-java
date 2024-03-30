@@ -1,73 +1,18 @@
 version: '3.8'
 
 services:
-  db-keycloak:
+  database:
     build:
       context: .
       dockerfile: database/Dockerfile
     image: postgres:${TAG}
-    container_name: "keycloak-database"
+    container_name: "database"
     platform: ${PLATFORM}
     environment:
-      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=postgres
     ports:
       - "5432:5432"
-    networks:
-      - network
-    healthcheck:
-      test: "pg_isready -U postgres"
-
-  db-calendar:
-    build:
-      context: .
-      dockerfile: database/Dockerfile
-    image: postgres:${TAG}
-    container_name: "calendar-database"
-    platform: ${PLATFORM}
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=calendar
-    ports:
-      - "5433:5432"
-    networks:
-      - network
-    healthcheck:
-      test: "pg_isready -U postgres"
-
-  db-chat:
-    build:
-      context: .
-      dockerfile: database/Dockerfile
-    image: postgres:${TAG}
-    container_name: "chat-database"
-    platform: ${PLATFORM}
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=chat
-    ports:
-      - "5434:5432"
-    networks:
-      - network
-    healthcheck:
-      test: "pg_isready -U postgres"
-
-  db-teams:
-    build:
-      context: .
-      dockerfile: database/Dockerfile
-    image: postgres:${TAG}
-    container_name: "teams-database"
-    platform: ${PLATFORM}
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=teams
-    ports:
-      - "5435:5432"
     networks:
       - network
     healthcheck:
@@ -83,6 +28,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      - hostname=rabbitmq
+      - RABBITMQ_FEATURE_FLAGS=implicit_default_bindings
     networks:
       - network
     healthcheck:
@@ -92,10 +40,6 @@ services:
     build:
       context: .
       dockerfile: keycloak/Dockerfile
-      # tak mozna zrobic
-      # args:
-      #   - AMQP_USERNAME=user
-      #   - AMQP_PASSWORD=password
     container_name: "keycloak"
     image: keycloak:${TAG}
     platform: ${PLATFORM}
@@ -103,7 +47,7 @@ services:
       - "8443:8443"
       - "8444:8444"
     depends_on:
-      db-keycloak:
+      database:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -111,6 +55,9 @@ services:
       - network
     healthcheck:
       test: ["CMD-SHELL", "echo -n > /dev/tcp/127.0.0.1/8443"]
+      retries: 5
+      timeout: 60s
+      interval: 60s
 
   api-gateway:
     build:
@@ -144,8 +91,6 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      db-calendar:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
 
@@ -162,8 +107,6 @@ services:
       - network
     depends_on:
       keycloak:
-        condition: service_healthy
-      db-chat:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -184,7 +127,7 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      db-teams:
+      database:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -192,4 +135,3 @@ services:
 networks:
   network:
     driver: bridge
-

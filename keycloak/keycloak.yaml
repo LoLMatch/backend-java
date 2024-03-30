@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/keycloak
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/keycloak:lolmatch
           envFrom:
             - configMapRef:
                 name: keycloak-configuration
@@ -28,7 +28,7 @@ kind: Service
 metadata:
   name: keycloak
 spec:
-  # type: LoadBalancer TODO HELM
+  type: LoadBalancer
   selector:
     id: keycloak
   ports:
@@ -42,5 +42,5 @@ metadata:
 data:
   AMQP_HOSTNAME: rabbitmq
   AMQP_PORT: "5672"
-  AMQP_USERNAME: user
+  AMQP_USERNAME: admin
   AMQP_PASSWORD: password

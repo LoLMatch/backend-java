@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: chat
-          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/chat-service
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/chat-service:lolmatch
           ports:
             - containerPort: 8080
 ---

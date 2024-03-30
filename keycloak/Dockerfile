@@ -22,11 +22,10 @@ ENV KC_METRICS_ENABLED=true
 
 # Configure database and message queue
 ENV KC_DB=postgres
-ENV KC_DB_PASSWORD=postgres
-ENV KC_DB_USERNAME=postgres
-ENV KC_DB_URL=jdbc:postgresql://keycloak-database:5432/keycloak
-# TO BEDZIE DO ZMIANY CALE, to w confie musi byc podawane
-# HOSTNAME TO IP ZASOBU
+ENV KC_DB_PASSWORD=keycloak
+ENV KC_DB_USERNAME=keycloak
+ENV KC_DB_URL=jdbc:postgresql://database:5432/keycloak
+
 ENV AMQP_HOSTNAME=rabbitmq
 ENV AMQP_PORT=5672
 ENV AMQP_USERNAME=$AMQP_USERNAME

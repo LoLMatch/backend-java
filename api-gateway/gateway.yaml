@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/api-gateway
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/api-gateway:lolmatch
           envFrom:
             - configMapRef:
                 name: api-gateway-cm
