@@ -25,6 +25,7 @@ public class SecurityConfig {
 						.jwt(Customizer.withDefaults())
 				)
 				.csrf(AbstractHttpConfigurer::disable)
+				.cors(AbstractHttpConfigurer::disable)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		
 		return http.build();

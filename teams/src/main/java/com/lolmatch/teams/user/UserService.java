@@ -5,12 +5,13 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	// TODO - dodać pobieranie winrate z pythona w jakiś sposób, raczej po HTTP
+	// TODO - dodać pobieranie winrate z pythona w jakiś sposób, raczej po HTTP i ew. scheduler żeby robić to co jakiś czas
 	private final UserRepository userRepository;
 	
 	public static UserDTO mapUserToUserDTO(User user) {
@@ -21,7 +22,7 @@ public class UserService {
 		User user = new User();
 		user.setId(dto.id());
 		user.setUsername(dto.username());
-		
+		user.setWinRate(BigDecimal.ZERO);
 		userRepository.save(user);
 	}
 	
