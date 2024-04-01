@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.*;
 
@@ -177,6 +178,9 @@ public class TeamService {
 		for (User user : team.getMembers()) {
 			membersSet.add(UserService.mapUserToUserDTO(user));
 		}
+		BigDecimal teamWinRate = team.getMembers().stream()
+				.map(User::getWinRate)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		return new TeamDTO(
 				team.getId(),
 				team.getLeaderId(),
@@ -185,7 +189,8 @@ public class TeamService {
 				membersSet,
 				team.isPublic(),
 				team.getTeamCountry(),
-				team.getMinimalRank());
+				team.getMinimalRank(),
+				teamWinRate);
 		
 	}
 	
