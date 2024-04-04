@@ -7,6 +7,8 @@ import com.lolmatch.teams.team.dto.TeamListDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +18,16 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/teams")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class TeamController {
 	
 	private final TeamService teamService;
 	
 	@GetMapping
-	public TeamListDTO getTeams(@RequestParam Optional<Integer> size, @RequestParam Optional<Integer> page, @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
-		log.info("Get list of teams request: " + size + ";" + page + ";" + country + ";" + minimalRank);
-		return teamService.getTeamsFilteredAndPaginated(size, page, country, minimalRank);
+	public TeamListDTO getTeams(@ParameterObject Pageable pageable,  @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
+		log.info("Get list of teams request: " + pageable + ";" + country + ";" + minimalRank);
+		return teamService.getTeamsFilteredAndPaginated(pageable, country, minimalRank);
 	}
 	
 	@PostMapping()
@@ -50,9 +52,9 @@ public class TeamController {
 		return teamService.updateTeam(id, dto, principal);
 	}
 	
-	@PostMapping("/users")
-	public TeamDTO addUserToTeam(@RequestBody AddUserToTeamRequest request, Principal principal) {
-		return teamService.addUserToTeam(request, principal);
+	@PostMapping("/{teamId}/users")
+	public TeamDTO addUserToTeam(@RequestBody AddUserToTeamRequest request, Principal principal, @PathVariable UUID teamId) {
+		return teamService.addUserToTeam(request.userId(), teamId, request.password(), principal);
 	}
 	
 	@DeleteMapping("/{teamId}/users/{userId}")

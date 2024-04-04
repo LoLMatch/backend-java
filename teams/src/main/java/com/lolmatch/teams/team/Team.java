@@ -59,4 +59,14 @@ public class Team {
 				teamWinRate
 		);
 	}
+	
+	public void addMember(User user){
+		user.setTeam(this);
+		members.add(user);
+	}
+	
+	public void removeMember(User user){
+		members.remove(user);
+		user.setTeam(null);
+	}
 }
