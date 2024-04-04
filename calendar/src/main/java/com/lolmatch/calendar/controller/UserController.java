@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/calendar/suggestions")
+@RequestMapping("/suggestions")
 @RequiredArgsConstructor
 public class UserController {
 
