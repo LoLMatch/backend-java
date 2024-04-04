@@ -3,7 +3,7 @@ package com.lolmatch.teams.team;
 import com.lolmatch.teams.team.dto.AddTeamRequest;
 import com.lolmatch.teams.team.dto.AddUserToTeamRequest;
 import com.lolmatch.teams.team.dto.TeamDTO;
-import com.lolmatch.teams.team.dto.TeamListReponse;
+import com.lolmatch.teams.team.dto.TeamListDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class TeamController {
 	private final TeamService teamService;
 	
 	@GetMapping
-	public TeamListReponse getTeams(@RequestParam Optional<Integer> size, @RequestParam Optional<Integer> page, @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
+	public TeamListDTO getTeams(@RequestParam Optional<Integer> size, @RequestParam Optional<Integer> page, @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
 		log.info("Get list of teams request: " + size + ";" + page + ";" + country + ";" + minimalRank);
 		return teamService.getTeamsFilteredAndPaginated(size, page, country, minimalRank);
 	}

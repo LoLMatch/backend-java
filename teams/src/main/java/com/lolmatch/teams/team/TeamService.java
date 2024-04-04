@@ -3,11 +3,9 @@ package com.lolmatch.teams.team;
 import com.lolmatch.teams.team.dto.AddTeamRequest;
 import com.lolmatch.teams.team.dto.AddUserToTeamRequest;
 import com.lolmatch.teams.team.dto.TeamDTO;
-import com.lolmatch.teams.team.dto.TeamListReponse;
+import com.lolmatch.teams.team.dto.TeamListDTO;
 import com.lolmatch.teams.user.User;
 import com.lolmatch.teams.user.UserRepository;
-import com.lolmatch.teams.user.UserService;
-import com.lolmatch.teams.user.dto.UserDTO;
 import com.lolmatch.teams.util.AmqpTeamChangesTransmitter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.*;
 
@@ -36,7 +33,7 @@ public class TeamService {
 	
 	private final AmqpTeamChangesTransmitter transmitter;
 	
-	TeamListReponse getTeamsFilteredAndPaginated(Optional<Integer> size, Optional<Integer> page, Optional<String> country, Optional<Rank> rank) {
+	TeamListDTO getTeamsFilteredAndPaginated(Optional<Integer> size, Optional<Integer> page, Optional<String> country, Optional<Rank> rank) {
 		int pageSize = size.orElse(20);
 		int pageNumber = page.orElse(0);
 		PageRequest request = PageRequest.of(pageNumber, pageSize);
@@ -47,7 +44,7 @@ public class TeamService {
 		} else {
 			teams = teamRepository.findTeamsByMinimalRankGreaterThanAndTeamCountryEquals(request, minimalRank, country.get());
 		}
-		return new TeamListReponse(mapTeamListToTeamDTOList(teams.getContent()), teams.getSize(), teams.getNumber(), teams.getTotalElements());
+		return new TeamListDTO(mapTeamListToTeamDTOList(teams.getContent()), teams.getSize(), teams.getNumber(), teams.getTotalElements());
 	}
 	
 	@Transactional
@@ -73,14 +70,14 @@ public class TeamService {
 				.build();
 		leader.setTeam(team);
 		Team savedTeam = teamRepository.save(team);
-		transmitter.transmitTeamChange(team, AmqpTeamChangesTransmitter.TeamChangeEnum.CREATE);
 		userRepository.save(leader);
-		return mapTeamToOutputDTO(savedTeam);
+		transmitter.transmitTeamChange(team, AmqpTeamChangesTransmitter.TeamChangeEnum.CREATE);
+		return savedTeam.toDto();
 	}
 	
 	TeamDTO findTeamById(UUID id) {
 		Team team = getTeamById(id);
-		return mapTeamToOutputDTO(team);
+		return team.toDto();
 	}
 	
 	@Transactional
@@ -100,7 +97,7 @@ public class TeamService {
 		
 		Team savedTeam = teamRepository.save(team);
 		
-		return mapTeamToOutputDTO(savedTeam);
+		return savedTeam.toDto();
 	}
 	
 	private Team getTeamById(UUID id) {
@@ -146,9 +143,11 @@ public class TeamService {
 		}
 		User member = userRepository.findById(request.userId()).orElseThrow(() -> new EntityNotFoundException("No user with id: " + request.userId() + ", has been found."));
 		member.setTeam(team);
+		team.getMembers().add(member);
 		userRepository.save(member);
 		transmitter.transmitUserChange(team.getId(), member.getId(), AmqpTeamChangesTransmitter.UserChangeEnum.JOIN);
-		return mapTeamToOutputDTO(teamRepository.save(team));
+		
+		return teamRepository.save(team).toDto();
 	}
 	
 	@Transactional
@@ -166,33 +165,9 @@ public class TeamService {
 	}
 	
 	List<TeamDTO> mapTeamListToTeamDTOList(List<Team> teams) {
-		ArrayList<TeamDTO> dtoList = new ArrayList<>();
-		for (Team team : teams) {
-			dtoList.add(mapTeamToOutputDTO(team));
-		}
-		return dtoList;
+		return teams
+				.stream()
+				.map(Team::toDto)
+				.toList();
 	}
-	
-	TeamDTO mapTeamToOutputDTO(Team team) {
-		HashSet<UserDTO> membersSet = new HashSet<>();
-		for (User user : team.getMembers()) {
-			membersSet.add(UserService.mapUserToUserDTO(user));
-		}
-		BigDecimal teamWinRate = team.getMembers().stream()
-				.map(User::getWinRate)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-		return new TeamDTO(
-				team.getId(),
-				team.getLeaderId(),
-				team.getName(),
-				team.getDescription(),
-				membersSet,
-				team.isPublic(),
-				team.getTeamCountry(),
-				team.getMinimalRank(),
-				teamWinRate);
-		
-	}
-	
-	
 }
