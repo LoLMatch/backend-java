@@ -10,12 +10,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	// TODO - dodać pobieranie winrate z pythona w jakiś sposób, raczej po HTTP i ew. scheduler żeby robić to co jakiś czas
+	// TODO - add win rate and profile picture fetching
 	private final UserRepository userRepository;
-	
-	public static UserDTO mapUserToUserDTO(User user) {
-		return new UserDTO(user.getId(), user.getUsername(), user.getWinRate());
-	}
 	
 	public void saveUser(UserDTO dto) {
 		User user = dto.toUser();

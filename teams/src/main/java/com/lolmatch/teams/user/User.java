@@ -30,6 +30,8 @@ public class User {
 	@JoinColumn(name = "team_id", referencedColumnName = "id")
 	private Team team;
 	
+	private int profilePictureId;
+	
 	private BigDecimal winRate;
 	
 	public User(UUID id) {
@@ -51,7 +53,7 @@ public class User {
 		return id.hashCode();
 	}
 	
-	public UserDTO toDto(){
-		return new UserDTO(id, username,winRate);
+	public UserDTO toDto() {
+		return new UserDTO(id, username, profilePictureId, winRate);
 	}
 }
