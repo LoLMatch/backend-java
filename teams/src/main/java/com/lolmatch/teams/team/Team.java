@@ -1,6 +1,7 @@
 package com.lolmatch.teams.team;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.lolmatch.teams.team.dto.TeamDTO;
 import com.lolmatch.teams.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +9,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -41,4 +43,20 @@ public class Team {
 	private String password;
 	
 	private BigDecimal teamWinRate;
+	
+	public TeamDTO toDto(){
+		return new TeamDTO(
+				id,
+				leaderId,
+				name,
+				description,
+				members.stream()
+						.map(User::toDto)
+						.collect(Collectors.toSet()),
+				isPublic,
+				teamCountry,
+				minimalRank,
+				teamWinRate
+		);
+	}
 }

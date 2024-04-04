@@ -5,7 +5,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -19,14 +18,11 @@ public class UserService {
 	}
 	
 	public void saveUser(UserDTO dto) {
-		User user = new User();
-		user.setId(dto.id());
-		user.setUsername(dto.username());
-		user.setWinRate(BigDecimal.ZERO);
+		User user = dto.toUser();
 		userRepository.save(user);
 	}
 	
-	public User getUserById(UUID id) {
-		return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found."));
+	public UserDTO getUserById(UUID id) {
+		return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found.")).toDto();
 	}
 }
