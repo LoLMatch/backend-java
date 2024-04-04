@@ -1,7 +1,6 @@
 package com.lolmatch.teams.team;
 
 import com.lolmatch.teams.team.dto.AddTeamRequest;
-import com.lolmatch.teams.team.dto.AddUserToTeamRequest;
 import com.lolmatch.teams.team.dto.TeamDTO;
 import com.lolmatch.teams.team.dto.TeamListDTO;
 import com.lolmatch.teams.user.User;
@@ -11,7 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class TeamService {
-	
+	// TODO - jakoś liczyć win rate drużyny
 	private final TeamRepository teamRepository;
 	
 	private final UserRepository userRepository;
@@ -33,16 +32,13 @@ public class TeamService {
 	
 	private final AmqpTeamChangesTransmitter transmitter;
 	
-	TeamListDTO getTeamsFilteredAndPaginated(Optional<Integer> size, Optional<Integer> page, Optional<String> country, Optional<Rank> rank) {
-		int pageSize = size.orElse(20);
-		int pageNumber = page.orElse(0);
-		PageRequest request = PageRequest.of(pageNumber, pageSize);
+	TeamListDTO getTeamsFilteredAndPaginated(Pageable pageable, Optional<String> country, Optional<Rank> rank) {
 		Rank minimalRank = rank.orElse(Rank.IRON_IV);
 		Page<Team> teams;
 		if (country.isEmpty()) {
-			teams = teamRepository.findTeamsByMinimalRankGreaterThan(request, minimalRank);
+			teams = teamRepository.findTeamsByMinimalRankGreaterThan(pageable, minimalRank);
 		} else {
-			teams = teamRepository.findTeamsByMinimalRankGreaterThanAndTeamCountryEquals(request, minimalRank, country.get());
+			teams = teamRepository.findTeamsByMinimalRankGreaterThanAndTeamCountryEquals(pageable, minimalRank, country.get());
 		}
 		return new TeamListDTO(mapTeamListToTeamDTOList(teams.getContent()), teams.getSize(), teams.getNumber(), teams.getTotalElements());
 	}
@@ -76,8 +72,7 @@ public class TeamService {
 	}
 	
 	TeamDTO findTeamById(UUID id) {
-		Team team = getTeamById(id);
-		return team.toDto();
+		return getTeamById(id).toDto();
 	}
 	
 	@Transactional
@@ -122,30 +117,30 @@ public class TeamService {
 	}
 	
 	@Transactional
-	TeamDTO addUserToTeam(AddUserToTeamRequest request, Principal principal) {
-		if (!Objects.equals(request.userId().toString(), principal.getName())) {
+	TeamDTO addUserToTeam(UUID userId, UUID teamId, Optional<String> password, Principal principal) {
+		if (!Objects.equals(userId.toString(), principal.getName())) {
 			throw new AccessDeniedException("Cannot add other user to a team");
 		}
-		Team team = getTeamById(request.teamId());
+		Team team = getTeamById(teamId);
 		if (!team.isPublic()) {
-			if (request.password().isEmpty()) {
-				log.info("Tried to access closed team without password: " + request + ';' + principal.getName());
+			if (password.isEmpty()) {
+				log.info("Tried to access closed team without password: " + userId + ";" + teamId + ';' + principal.getName());
 				throw new AccessDeniedException("Cannot access closed team without password");
 			}
-			if (!passwordEncoder.matches(request.password().get(), team.getPassword())) {
-				log.info("Wrong password to access a team: " + request + ";" + principal.getName());
+			if (!passwordEncoder.matches(password.get(), team.getPassword())) {
+				log.info("Wrong password to access a team: "  + userId + ";" + teamId + ";" + principal.getName());
 				throw new AccessDeniedException("Wrong password");
 			}
 		}
 		if (team.getMembers().size() >= 10) {
-			log.info("Tried to add more than 10 members to a team: " + request);
+			log.info("Tried to add more than 10 members to a team: "  + userId + ";" + teamId);
 			throw new IllegalArgumentException("Team cannot have more than 10 members");
 		}
-		User member = userRepository.findById(request.userId()).orElseThrow(() -> new EntityNotFoundException("No user with id: " + request.userId() + ", has been found."));
-		member.setTeam(team);
-		team.getMembers().add(member);
-		userRepository.save(member);
-		transmitter.transmitUserChange(team.getId(), member.getId(), AmqpTeamChangesTransmitter.UserChangeEnum.JOIN);
+		//User member = userRepository.findById(request.userId()).orElseThrow(() -> new EntityNotFoundException("No user with id: " + request.userId() + ", has been found."));
+		//member.setTeam(team);
+		User member = userRepository.getReferenceById(userId);
+		team.addMember(member);
+		transmitter.transmitUserChange(team.getId(), userId, AmqpTeamChangesTransmitter.UserChangeEnum.JOIN);
 		
 		return teamRepository.save(team).toDto();
 	}
@@ -157,11 +152,13 @@ public class TeamService {
 			log.info("Tried to kick another member from a team: teamId - " + team + " principal: " + principal);
 			throw new AccessDeniedException("Member may leave team or can be kicked out only by team's leader");
 		}
-		User member = getUserById(userId);
-		member.setTeam(null);
-		userRepository.save(member);
-		transmitter.transmitUserChange(team.getId(), member.getId(), AmqpTeamChangesTransmitter.UserChangeEnum.LEAVE);
-		teamRepository.save(team);
+		//User member = getUserById(userId);
+		//member.setTeam(null);
+		//userRepository.save(member);
+		User member = userRepository.getReferenceById(userId);
+		team.removeMember(member);
+		transmitter.transmitUserChange(team.getId(), userId, AmqpTeamChangesTransmitter.UserChangeEnum.LEAVE);
+		//teamRepository.save(team);
 	}
 	
 	List<TeamDTO> mapTeamListToTeamDTOList(List<Team> teams) {
