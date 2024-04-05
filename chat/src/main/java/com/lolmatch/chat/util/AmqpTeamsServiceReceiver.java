@@ -39,12 +39,8 @@ public class AmqpTeamsServiceReceiver {
 		UserChangeMessage msg = objectMapper.readValue(in, UserChangeMessage.class);
 		
 		switch (msg.type) {
-			case JOIN -> {
-				groupService.addUserToGroup(msg.teamId, msg.userId);
-			}
-			case LEAVE -> {
-				groupService.deleteUserFromGroup(msg.userId);
-			}
+			case JOIN -> groupService.addUserToGroup(msg.teamId, msg.userId);
+			case LEAVE -> groupService.deleteUserFromGroup(msg.userId);
 			default -> {
 				log.warn("Wrong msg type on user-change-team-queue: " + msg);
 				throw new IllegalArgumentException("Wrong type on msg: " + msg);
@@ -58,15 +54,9 @@ public class AmqpTeamsServiceReceiver {
 		TeamChangeMessage msg = objectMapper.readValue(in, TeamChangeMessage.class);
 		
 		switch (msg.type) {
-			case CREATE -> {
-				groupService.saveGroup(msg.teamId, msg.leaderId, msg.name);
-			}
-			case UPDATE -> {
-				groupService.editGroup(msg.teamId, msg.name);
-			}
-			case DELETE -> {
-				groupService.deleteGroup(msg.teamId);
-			}
+			case CREATE -> groupService.saveGroup(msg.teamId, msg.leaderId, msg.name);
+			case UPDATE -> groupService.editGroup(msg.teamId, msg.name);
+			case DELETE -> groupService.deleteGroup(msg.teamId);
 			default -> {
 				log.warn("Wrong msg type on user-change-team-queue: " + msg);
 				throw new IllegalArgumentException("Wrong type on msg: " + msg);

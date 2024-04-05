@@ -26,7 +26,6 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 	
 	@Override
 	public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
-		// TODO - czy to jest optymalne żeby to tworzyć za każdym razem?
 		final JwtDecoder jwtDecoder = NimbusJwtDecoder.withIssuerLocation(issuerUri).build();
 		
 		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);

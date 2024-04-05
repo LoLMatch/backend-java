@@ -4,14 +4,16 @@ import com.lolmatch.chat.dao.GroupRepository;
 import com.lolmatch.chat.dao.MessageRepository;
 import com.lolmatch.chat.dao.ReadStatusRepository;
 import com.lolmatch.chat.dao.UserRepository;
-import com.lolmatch.chat.dto.*;
+import com.lolmatch.chat.dto.IncomingMessageDTO;
+import com.lolmatch.chat.dto.MessageDTO;
+import com.lolmatch.chat.dto.MessageListDTO;
+import com.lolmatch.chat.dto.MessageReadDTO;
 import com.lolmatch.chat.entity.Group;
 import com.lolmatch.chat.entity.Message;
 import com.lolmatch.chat.entity.ReadStatus;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUser;
@@ -23,7 +25,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,65 +43,58 @@ public class MessageService {
 	private final ReadStatusRepository readStatusRepository;
 	
 	@Transactional
-	public FetchMessagesDTO getMessageListBetweenUsers(UUID firstId, UUID secondId, Optional<Integer> size, Optional<Integer> page) {
-		int pageNumber = page.orElse(0);
-		int pageSize = size.orElse(20);
-		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+	public MessageListDTO getMessageListBetweenUsers(UUID firstId, UUID secondId, Pageable pageable) {
 		Page<Message> messagePage;
-		if ( userRepository.existsById(secondId)) {
+		if (userRepository.existsById(secondId)) {
 			messagePage = messageRepository.getMessagesBetweenUsersPaged(firstId, secondId, pageable);
 		} else {
 			messagePage = messageRepository.findAllByGroupRecipientIdOrderByCreatedAtDesc(secondId, pageable);
 		}
-		return FetchMessagesDTO.builder()
-				.amount(messagePage.getSize())
-				.page(messagePage.getNumber())
-				.messages(messagePage.getContent())
-				.totalMessages(messagePage.getTotalElements())
-				.build();
+		return new MessageListDTO(messageListToDto(messagePage.getContent()), messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalElements());
 	}
 	
 	@Transactional
 	public void saveMessage(IncomingMessageDTO incomingMessage) {
 		Message message = new Message();
-		message.setSender(userRepository.getReferenceById(incomingMessage.getSenderId()));
+		message.setSender(userRepository.getReferenceById(incomingMessage.senderId()));
 		message.setCreatedAt(setTime(incomingMessage));
-		message.setContent(incomingMessage.getContent());
-		if (incomingMessage.getParentId() != null) {
-			message.setParentMessage(messageRepository.getReferenceById(incomingMessage.getParentId()));
+		message.setContent(incomingMessage.content());
+		message.setRecipient(userRepository.getReferenceById(incomingMessage.recipientId()));
+		if (incomingMessage.parentId() != null) {
+			message.setParentMessage(messageRepository.getReferenceById(incomingMessage.parentId()));
 		}
-		OutgoingMessageDTO dto = convertMessageToDto(messageRepository.save(message));
+		MessageDTO dto = messageRepository.save(message).toDto();
 		
-		messagingTemplate.convertAndSend("/topic/chat/" + String.valueOf(dto.getRecipientId()), dto);
-		messagingTemplate.convertAndSend("/topic/chat/" + String.valueOf(dto.getSenderId()), dto);
+		messagingTemplate.convertAndSend("/topic/chat/" + dto.recipientId(), dto);
+		messagingTemplate.convertAndSend("/topic/chat/" + dto.senderId(), dto);
 	}
 	
 	@Transactional
 	public void setMessageRead(IncomingMessageDTO incomingMessage) {
 		final Timestamp time = setTime(incomingMessage);
-		messageRepository.setReadTimestamp(time, incomingMessage.getSenderId(), incomingMessage.getRecipientId());
-		MessageReadDTO dto = new MessageReadDTO(incomingMessage.getSenderId(), incomingMessage.getRecipientId(), time);
+		messageRepository.setReadTimestamp(time, incomingMessage.senderId(), incomingMessage.recipientId());
+		MessageReadDTO dto = new MessageReadDTO(incomingMessage.senderId(), incomingMessage.recipientId(), time);
 		
-		messagingTemplate.convertAndSend("/topic/chat/" + String.valueOf(dto.getSenderId()), dto);
+		messagingTemplate.convertAndSend("/topic/chat/" + dto.senderId(), dto);
 	}
 	
 	@Transactional
 	public void saveMessageGroup(IncomingMessageDTO incomingMessage) {
-		Group group = groupRepository.findById(incomingMessage.getRecipientId()).orElseThrow(() -> new EntityNotFoundException("No group found"));
+		Group group = groupRepository.findById(incomingMessage.recipientId()).orElseThrow(() -> new EntityNotFoundException("No group found"));
 		Message message = new Message();
-		message.setSender(userRepository.getReferenceById(incomingMessage.getSenderId()));
+		message.setSender(userRepository.getReferenceById(incomingMessage.senderId()));
 		message.setGroupRecipient(group);
 		message.setCreatedAt(setTime(incomingMessage));
-		message.setContent(incomingMessage.getContent());
-		if (incomingMessage.getParentId() != null) {
-			message.setParentMessage(messageRepository.getReferenceById(incomingMessage.getParentId()));
+		message.setContent(incomingMessage.content());
+		if (incomingMessage.parentId() != null) {
+			message.setParentMessage(messageRepository.getReferenceById(incomingMessage.parentId()));
 		}
-		OutgoingMessageDTO dto = convertMessageToDto(messageRepository.save(message));
+		MessageDTO dto = messageRepository.save(message).toDto();
 		
 		group.getUsers().forEach(user -> {
 			SimpUser simpUser = userRegistry.getUser(user.getId().toString());
 			if (simpUser != null && simpUser.hasSessions()) {
-				messagingTemplate.convertAndSend("/topic/chat/" + String.valueOf(user.getId()), dto);
+				messagingTemplate.convertAndSend("/topic/chat/" + user.getId(), dto);
 			}
 		});
 	}
@@ -108,61 +102,38 @@ public class MessageService {
 	@Transactional
 	public void setMessageReadGroup(IncomingMessageDTO incomingMessage) {
 		Timestamp time = setTime(incomingMessage);
-		// zapytanie poniżej powinno znaleźć wszystkie wiadomości grupy, które nie zostały odczytane przez danego użytkownika
-		List<Message> unreadMessages = messageRepository.findAllGroupMessagesUnreadByUserIdAndGroupId(incomingMessage.getRecipientId(), incomingMessage.getSenderId());
-		for ( Message unreadMessage: unreadMessages){
+		List<Message> unreadMessages = messageRepository.findAllGroupMessagesUnreadByUserIdAndGroupId(incomingMessage.recipientId(), incomingMessage.senderId());
+		for (Message unreadMessage : unreadMessages) {
 			ReadStatus readStatus = new ReadStatus();
-			readStatus.setUserId(incomingMessage.getRecipientId());
+			readStatus.setUserId(incomingMessage.recipientId());
 			readStatus.setReadAt(time);
 			readStatus.setMessage(unreadMessage);
 			
 			readStatusRepository.save(readStatus);
 		}
 		// send info to all other users that all messages have been read
-		Group group = groupRepository.findById(incomingMessage.getSenderId()).orElseThrow(() -> new EntityNotFoundException("No group found"));
+		Group group = groupRepository.findById(incomingMessage.senderId()).orElseThrow(() -> new EntityNotFoundException("No group found"));
 		group.getUsers().forEach(user -> {
 			SimpUser simpUser = userRegistry.getUser(user.getId().toString());
-			if (simpUser != null && simpUser.hasSessions() && !user.getId().equals(incomingMessage.getRecipientId())) {
-				MessageReadDTO dto = new MessageReadDTO(incomingMessage.getSenderId(), incomingMessage.getRecipientId(), time);
+			if (simpUser != null && simpUser.hasSessions() && !user.getId().equals(incomingMessage.recipientId())) {
+				MessageReadDTO dto = new MessageReadDTO(incomingMessage.senderId(), incomingMessage.recipientId(), time);
 				messagingTemplate.convertAndSend("/topic/chat/" + String.valueOf(user.getId()), dto);
 			}
 		});
 	}
 	
-	private OutgoingMessageDTO convertMessageToDto(Message message) {
-		UUID recipientId;
-		if (message.getRecipient() == null){
-			recipientId = message.getGroupRecipient().getId();
-		} else {
-			recipientId = message.getRecipient().getId();
-		}
-		return OutgoingMessageDTO.builder()
-				.id(message.getId())
-				.senderId(message.getSender().getId())
-				.recipientId(recipientId)
-				.readAt(message.getReadAt())
-				.createdAt(message.getCreatedAt())
-				.content(message.getContent())
-				.readAtList(convertReadStatusDtoList(message.getReadStatuses()))
-				.build();
-	}
-	
-	private ReadStatusDTO convertReadStatusToDto(ReadStatus status){
-		return new ReadStatusDTO(status.getId(), status.getUserId(), status.getReadAt(), status.getMessage().getId());
-	}
-	
-	private List<ReadStatusDTO> convertReadStatusDtoList(List<ReadStatus> list){
-		if (list == null){
+	private List<MessageDTO> messageListToDto(List<Message> messages) {
+		if (messages.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return list.stream().map(this::convertReadStatusToDto).toList();
+		return messages.stream().map(Message::toDto).toList();
 	}
 	
 	private Timestamp setTime(IncomingMessageDTO dto) {
-		if (dto.getTime() == null) {
+		if (dto.time() == null) {
 			return Timestamp.from(Instant.now());
 		} else {
-			return Timestamp.from(dto.getTime());
+			return Timestamp.from(dto.time());
 		}
 	}
 }

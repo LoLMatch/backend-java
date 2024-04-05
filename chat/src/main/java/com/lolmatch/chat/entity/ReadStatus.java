@@ -1,6 +1,7 @@
 package com.lolmatch.chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.lolmatch.chat.dto.ReadStatusDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,4 +28,8 @@ public class ReadStatus {
 	@JsonBackReference
 	@JoinColumn(name = "group_id")
 	private Message message;
+	
+	public ReadStatusDTO toDto(){
+		return new ReadStatusDTO(id, userId,readAt,message.getId());
+	}
 }

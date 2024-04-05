@@ -1,10 +1,13 @@
 package com.lolmatch.chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.lolmatch.chat.dto.MessageDTO;
+import com.lolmatch.chat.dto.ReadStatusDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,6 +56,21 @@ public class Message {
 	private Message parentMessage;
 	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "message")
+	@OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
 	private List<ReadStatus> readStatuses;
+	
+	public MessageDTO toDto(){
+		List<ReadStatusDTO> statusList;
+		UUID recipientId;
+		if ( recipient == null){
+			// grupowa
+			 statusList = readStatuses.stream().map(ReadStatus::toDto).toList();
+			 recipientId = groupRecipient.getId();
+		} else {
+			// zwykła
+			statusList = Collections.emptyList();
+			recipientId = recipient.getId();
+		}
+		return new MessageDTO(id, content,createdAt,readAt,sender.getId(),recipientId, parentMessage.getId(), statusList);
+	}
 }

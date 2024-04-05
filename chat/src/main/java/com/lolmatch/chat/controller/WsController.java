@@ -27,14 +27,14 @@ public class WsController {
 	""")
 	public void processMessage(@Payload IncomingMessageDTO message, Principal principal) {
 		log.info("Incoming message on channel /app/chat, details: "  + message.toString());
-		switch ( message.getType()){
+		switch ( message.type()){
 			case SEND -> messageService.saveMessage(message);
 			case MARK_READ -> messageService.setMessageRead(message);
 			case SEND_GROUP -> messageService.saveMessageGroup(message);
 			case MARK_READ_GROUP -> messageService.setMessageReadGroup(message);
 			default -> {
 				log.error("Wrong action type on incoming message: " + message);
-				throw new IllegalStateException("Wrong action type on incoming message - " + message.getType());
+				throw new IllegalStateException("Wrong action type on incoming message - " + message.type());
 			}
 		}
 	}

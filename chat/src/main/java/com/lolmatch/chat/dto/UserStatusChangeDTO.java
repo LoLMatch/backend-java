@@ -1,21 +1,19 @@
 package com.lolmatch.chat.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.UUID;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class UserStatusChangeDTO {
+public record UserStatusChangeDTO (
 	
-	private final String action = "CHANGE_STATUS";
+	  String action,
 
-	private String id;
+	 String id,
 	
-	private StatusType status;
+	 StatusType status
+	
+	
+) {
+	public UserStatusChangeDTO(String id, StatusType status) {
+		this("CHANGE_STATUS", id, status);
+	}
+	
 	public enum StatusType {
 		ACTIVE,
 		INACTIVE

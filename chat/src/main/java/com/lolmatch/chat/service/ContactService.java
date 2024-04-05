@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ public class ContactService {
 	public List<Contact> getContactsForUser(UUID id) {
 		return contactRepository.findAllByUserId(id);
 	}
-	
+	// TODO - to jest do zapisywania kontaktów jak będą przychodzić z kolejki
 	public void saveContact(UUID firstUserId, UUID secondUserId) {
 		User first = userService.getUserByUUID(firstUserId);
 		User second = userService.getUserByUUID(secondUserId);
@@ -70,25 +71,40 @@ public class ContactService {
 	
 	@Transactional
 	public ContactListDTO getContactListForUser(UUID id) {
+		// TODO - tutaj powinna być paginacja
 		User user = userService.getUserByUUID(id);
 		List<Contact> contactsFromDb = contactRepository.findAllByUser(user);
-		ContactListDTO dto = new ContactListDTO();
-		dto.setUser(user);
+		Map<UUID, Long> unreadMessages = messageRepository.countUnreadForContactsOfUser(id)
+				.stream()
+				.map(result -> {
+					UUID userId = (UUID) result[1];
+					Long unreadMessagesCount = (Long) result[0];
+					return new UnreadMessages(unreadMessagesCount, userId);
+				})
+				.collect(Collectors.toMap(UnreadMessages::userId, UnreadMessages::unreadMessagesCount));
+		Map<UUID, Message> lastMessages = messageRepository.getLastMessagesBetweenUserAndContact(id)
+				.stream()
+				.map(message -> {
+					if (message.getRecipient().getId() != id) {
+						return new MessageContactRecord(message.getRecipient().getId(), message);
+					} else {
+						return new MessageContactRecord(message.getSender().getId(), message);
+					}
+				})
+				.collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
 		List<ContactDTO> contacts = contactsFromDb.stream().map(contact -> {
-			Optional<Message> lastMessage = messageRepository.getLastMessageBetweenUsers(id, contact.getContactId());
-			
+			Message lastMessage = lastMessages.getOrDefault(contact.getContactId(), null);
 			String lastMessageContent;
 			UUID lastMessageSenderId;
 			Timestamp lastMessageTimestamp;
-			if (lastMessage.isEmpty()) {
+			if (lastMessage == null) {
 				lastMessageContent = "";
 				lastMessageSenderId = null;
 				lastMessageTimestamp = null;
 			} else {
-				Message message = lastMessage.get();
-				lastMessageContent = message.getContent();
-				lastMessageSenderId = message.getSender() == user ? id : contact.getContactId();
-				lastMessageTimestamp = message.getCreatedAt();
+				lastMessageContent = lastMessage.getContent();
+				lastMessageSenderId = lastMessage.getSender().getId() == id ? id : contact.getContactId();
+				lastMessageTimestamp = lastMessage.getCreatedAt();
 			}
 			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContactId()));
 			boolean isActive;
@@ -101,13 +117,17 @@ public class ContactService {
 			if (isActive) {
 				lastActiveTimestamp = null;
 			} else {
-				lastActiveTimestamp = messageRepository.getLastMessageOfUser(id).orElse(null);
+				if (lastMessage == null) {
+					lastActiveTimestamp = null;
+				} else {
+					lastActiveTimestamp = lastMessage.getCreatedAt();
+				}
 			}
 			return new ContactDTO(
 					contact.getContactId(),
 					contact.getContactUsername(),
 					"USER",
-					messageRepository.countAllBySenderIdAndRecipientAndReadAtIsNull(contact.getContactId(), user),
+					unreadMessages.get(contact.getContactId()),
 					lastMessageContent,
 					lastMessageSenderId,
 					isActive,
@@ -130,7 +150,7 @@ public class ContactService {
 				lastMessageTimestamp = null;
 				lastMessageSenderId = null;
 			}
-			int unreadMessages = messageRepository.countAllUnreadByUserIdAndGroupId(user.getId(), group.getId());
+			Long unreadMessagesInGroup = messageRepository.countAllUnreadByUserIdAndGroupId(user.getId(), group.getId());
 			
 			boolean activeStatus = group.getUsers().stream().anyMatch(groupUser -> {
 				SimpUser simpUser = simpUserRegistry.getUser(groupUser.getId().toString());
@@ -146,7 +166,7 @@ public class ContactService {
 					group.getId(),
 					group.getName(),
 					"GROUP",
-					unreadMessages,
+					unreadMessagesInGroup,
 					lastMessage,
 					lastMessageSenderId,
 					activeStatus,
@@ -155,15 +175,18 @@ public class ContactService {
 			);
 			contacts.add(contact);
 		}
-		System.out.println("TEST");
 		contacts.sort((a, b) -> {
-			if ( a.lastMessageTimestamp() == null || b.lastMessageTimestamp() == null){
+			if (a.lastMessageTimestamp() == null || b.lastMessageTimestamp() == null) {
 				return 0;
 			}
 			return b.lastMessageTimestamp().compareTo(a.lastMessageTimestamp());
 		});
-		dto.setContacts(contacts);
 		
-		return dto;
+		return new ContactListDTO(user, contacts);
+	}
+	
+	private record MessageContactRecord(UUID userId, Message message) {
+	}
+	private record UnreadMessages(long unreadMessagesCount, UUID userId) {
 	}
 }
