@@ -62,6 +62,7 @@ public class Message {
 	public MessageDTO toDto(){
 		List<ReadStatusDTO> statusList;
 		UUID recipientId;
+		UUID parentId;
 		if ( recipient == null){
 			// grupowa
 			 statusList = readStatuses.stream().map(ReadStatus::toDto).toList();
@@ -71,6 +72,11 @@ public class Message {
 			statusList = Collections.emptyList();
 			recipientId = recipient.getId();
 		}
-		return new MessageDTO(id, content,createdAt,readAt,sender.getId(),recipientId, parentMessage.getId(), statusList);
+		if ( parentMessage == null){
+			parentId = null;
+		} else {
+			parentId = parentMessage.getId();
+		}
+		return new MessageDTO(id, content,createdAt,readAt,sender.getId(),recipientId, parentId, statusList);
 	}
 }
