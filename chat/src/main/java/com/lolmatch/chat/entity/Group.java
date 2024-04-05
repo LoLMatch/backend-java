@@ -24,11 +24,11 @@ public class Group {
 	private String name;
 	
 	@JsonBackReference
-	@OneToMany
+	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
 	private Set<User> users;
 	
 	@JsonBackReference
-	@OneToMany(mappedBy = "groupRecipient")
+	@OneToMany(mappedBy = "groupRecipient", fetch = FetchType.LAZY)
 	private Set<Message> groupMessages;
 
 }

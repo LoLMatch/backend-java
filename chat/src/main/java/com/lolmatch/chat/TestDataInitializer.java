@@ -53,6 +53,7 @@ public class TestDataInitializer {
 		createMessage(rob, bob, "no content");
 		createMessage(bob, rob, "message2");
 		createMessage(rob, ash, "some message");
+		createMessage(ash, bob, "message content");
 		
 		Group group = new Group();
 		group.setName("best team");

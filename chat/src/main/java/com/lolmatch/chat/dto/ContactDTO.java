@@ -7,7 +7,7 @@ public record ContactDTO(
 		UUID contactId,
 		String username,
 		String contactType,
-		Integer unreadMessages,
+		Long unreadMessages,
 		String lastMessage,
 		UUID lastMessageSenderId,
 		Boolean isActive,

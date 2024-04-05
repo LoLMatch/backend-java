@@ -27,8 +27,8 @@ public class UserService {
 	
 	public void saveUserFromDTO(UserDTO userDTO){
 		User user = new User();
-		user.setId(userDTO.getId());
-		user.setUsername(userDTO.getUsername());
+		user.setId(userDTO.id());
+		user.setUsername(userDTO.username());
 		
 		userRepository.save(user);
 	}

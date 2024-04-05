@@ -22,8 +22,8 @@ public class StatusService {
 	
 	@EventListener
 	public void handleUserStatusChange(UserStatusChangeEvent event) {
-		List<Contact> contacts = contactService.getContactsForUser(UUID.fromString(event.getStatusChangeDTO().getId()));
-		log.info("Status of user: " + event.getStatusChangeDTO().getId() + ", changed to: " + event.getStatusChangeDTO().getStatus());
+		List<Contact> contacts = contactService.getContactsForUser(UUID.fromString(event.getStatusChangeDTO().id()));
+		log.info("Status of user: " + event.getStatusChangeDTO().id() + ", changed to: " + event.getStatusChangeDTO().status());
 		for (Contact contact : contacts) {
 			messagingTemplate.convertAndSend("/topic/chat/" + contact.getContactId(), event.getStatusChangeDTO());
 		}
