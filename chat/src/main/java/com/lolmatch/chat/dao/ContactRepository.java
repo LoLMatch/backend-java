@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface ContactRepository extends JpaRepository<Contact, UUID> {
 	
-	public List<Contact> findAllByUser(User user);
+	List<Contact> findAllByUser(User user);
 
-	public List<Contact> findAllByUserId(UUID id);
+	List<Contact> findAllByUserId(UUID id);
 }

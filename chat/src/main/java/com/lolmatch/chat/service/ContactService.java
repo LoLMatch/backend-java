@@ -2,9 +2,7 @@ package com.lolmatch.chat.service;
 
 import com.lolmatch.chat.dao.ContactRepository;
 import com.lolmatch.chat.dao.MessageRepository;
-import com.lolmatch.chat.dto.ContactChangeDTO;
-import com.lolmatch.chat.dto.ContactDTO;
-import com.lolmatch.chat.dto.ContactListDTO;
+import com.lolmatch.chat.dto.*;
 import com.lolmatch.chat.entity.Contact;
 import com.lolmatch.chat.entity.Group;
 import com.lolmatch.chat.entity.Message;
@@ -73,27 +71,18 @@ public class ContactService {
 	public ContactListDTO getContactListForUser(UUID id) {
 		// TODO - tutaj powinna być paginacja
 		User user = userService.getUserByUUID(id);
-		List<Contact> contactsFromDb = contactRepository.findAllByUser(user);
-		Map<UUID, Long> unreadMessages = messageRepository.countUnreadForContactsOfUser(id)
+		Map<UUID, Long> unreadMessages = messageRepository.countUnreadMessagesForContactsOfUser(id)
 				.stream()
-				.map(result -> {
-					UUID userId = (UUID) result[1];
-					Long unreadMessagesCount = (Long) result[0];
-					return new UnreadMessages(unreadMessagesCount, userId);
-				})
-				.collect(Collectors.toMap(UnreadMessages::userId, UnreadMessages::unreadMessagesCount));
-		Map<UUID, Message> lastMessages = messageRepository.getLastMessagesBetweenUserAndContact(id)
+				.collect(Collectors.toMap(UnreadMessagesDTO::userId, UnreadMessagesDTO::unreadMessagesCount));
+		Map<UUID, MessageDTO> lastMessages = messageRepository.getLastMessagesBetweenUserAndContact(id)
 				.stream()
 				.map(message -> {
-					if (message.getRecipient().getId() != id) {
-						return new MessageContactRecord(message.getRecipient().getId(), message);
-					} else {
-						return new MessageContactRecord(message.getSender().getId(), message);
-					}
+					UUID messageContactId = message.recipientId() == id ? message.senderId() : message.recipientId();
+					return new MessageContactRecord(messageContactId, message);
 				})
 				.collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
-		List<ContactDTO> contacts = contactsFromDb.stream().map(contact -> {
-			Message lastMessage = lastMessages.getOrDefault(contact.getContactId(), null);
+		List<ContactDTO> contacts = user.getContacts().stream().map(contact -> {
+			MessageDTO lastMessage = lastMessages.getOrDefault(contact.getContactId(), null);
 			String lastMessageContent;
 			UUID lastMessageSenderId;
 			Timestamp lastMessageTimestamp;
@@ -102,9 +91,9 @@ public class ContactService {
 				lastMessageSenderId = null;
 				lastMessageTimestamp = null;
 			} else {
-				lastMessageContent = lastMessage.getContent();
-				lastMessageSenderId = lastMessage.getSender().getId() == id ? id : contact.getContactId();
-				lastMessageTimestamp = lastMessage.getCreatedAt();
+				lastMessageContent = lastMessage.content();
+				lastMessageSenderId = lastMessage.senderId() == id ? id : contact.getContactId();
+				lastMessageTimestamp = lastMessage.createdAt();
 			}
 			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContactId()));
 			boolean isActive;
@@ -120,7 +109,7 @@ public class ContactService {
 				if (lastMessage == null) {
 					lastActiveTimestamp = null;
 				} else {
-					lastActiveTimestamp = lastMessage.getCreatedAt();
+					lastActiveTimestamp = lastMessage.createdAt();
 				}
 			}
 			return new ContactDTO(
@@ -185,8 +174,6 @@ public class ContactService {
 		return new ContactListDTO(user, contacts);
 	}
 	
-	private record MessageContactRecord(UUID userId, Message message) {
-	}
-	private record UnreadMessages(long unreadMessagesCount, UUID userId) {
+	private record MessageContactRecord(UUID userId, MessageDTO message) {
 	}
 }

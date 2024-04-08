@@ -17,6 +17,7 @@ spring:
                 generate_statistics: false
         database: postgresql
         database-platform: org.hibernate.dialect.PostgreSQLDialect
+        open-in-view: false
     jackson:
         deserialization:
             fail-on-unknown-properties: false

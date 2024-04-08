@@ -44,13 +44,17 @@ public class MessageService {
 	
 	@Transactional
 	public MessageListDTO getMessageListBetweenUsers(UUID firstId, UUID secondId, Pageable pageable) {
-		Page<Message> messagePage;
 		if (userRepository.existsById(secondId)) {
+			// fetch for users
+			Page<MessageDTO> messagePage;
 			messagePage = messageRepository.getMessagesBetweenUsersPaged(firstId, secondId, pageable);
+			return new MessageListDTO(messagePage.getContent(), messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalElements());
 		} else {
+			// fetch for group
+			Page<Message> messagePage;
 			messagePage = messageRepository.findAllByGroupRecipientIdOrderByCreatedAtDesc(secondId, pageable);
+			return new MessageListDTO(messageListToDto(messagePage.getContent()), messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalElements());
 		}
-		return new MessageListDTO(messageListToDto(messagePage.getContent()), messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalElements());
 	}
 	
 	@Transactional
