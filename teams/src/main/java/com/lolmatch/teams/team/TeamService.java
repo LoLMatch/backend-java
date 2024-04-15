@@ -33,17 +33,9 @@ public class TeamService {
 	private final AmqpTeamChangesTransmitter transmitter;
 	
 	@Transactional(readOnly = true)
-	TeamListDTO getTeamsFilteredAndPaginated(Pageable pageable, Optional<String> country, Optional<Rank> rank, Optional<String> name) {
+	TeamListDTO getTeamsFilteredAndPaginated(Pageable pageable, Optional<String> country, Optional<Rank> rank) {
 		Rank minimalRank = rank.orElse(Rank.IRON_IV);
 		Page<Team> teams;
-		if (name.isPresent()){
-			Optional<Team> team = teamRepository.findTeamByName(name.get());
-			if (team.isPresent()){
-				return new TeamListDTO(List.of(team.get().toDto()), 1, 0, 1);
-			} else {
-				throw new EntityNotFoundException("No team with name: " + name.get());
-			}
-		}
 		if (country.isEmpty()) {
 			teams = teamRepository.findTeamsByMinimalRankGreaterThan(pageable, minimalRank);
 		} else {
@@ -80,8 +72,13 @@ public class TeamService {
 		return savedTeam.toDto();
 	}
 	
-	TeamDTO findTeamById(UUID id) {
-		return teamRepository.findTeamById(id).orElseThrow().toDto();
+	TeamDTO findTeamByCriteria(String criteria) {
+		try{
+			UUID id = UUID.fromString(criteria);
+			return teamRepository.findTeamById(id).orElseThrow().toDto();
+		} catch (IllegalArgumentException e){
+			return teamRepository.findTeamByName(criteria).orElseThrow().toDto();
+		}
 	}
 	
 	@Transactional

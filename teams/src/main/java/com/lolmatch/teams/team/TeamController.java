@@ -4,6 +4,7 @@ import com.lolmatch.teams.team.dto.AddTeamRequest;
 import com.lolmatch.teams.team.dto.AddUserToTeamRequest;
 import com.lolmatch.teams.team.dto.TeamDTO;
 import com.lolmatch.teams.team.dto.TeamListDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,9 @@ public class TeamController {
 	private final TeamService teamService;
 	
 	@GetMapping
-	public TeamListDTO getTeams(@ParameterObject Pageable pageable,  @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank, @RequestParam Optional<String> name) {
+	public TeamListDTO getTeams(@ParameterObject Pageable pageable,  @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
 		log.info("Get list of teams request: " + pageable + ";" + country + ";" + minimalRank);
-		return teamService.getTeamsFilteredAndPaginated(pageable, country, minimalRank, name);
+		return teamService.getTeamsFilteredAndPaginated(pageable, country, minimalRank);
 	}
 	
 	@PostMapping()
@@ -37,9 +38,10 @@ public class TeamController {
 		return teamService.saveTeam(dto, principal);
 	}
 	
-	@GetMapping("/{id}")
-	public TeamDTO getTeamById(@PathVariable UUID id) {
-		return teamService.findTeamById(id);
+	@GetMapping("/{criteria}")
+	@Operation( summary = "Searches team either by ID if given criteria is proper UUID or else criteria is a team's name")
+	public TeamDTO getTeamById(@PathVariable String criteria) {
+		return teamService.findTeamByCriteria(criteria);
 	}
 	
 	@DeleteMapping("/{id}")
