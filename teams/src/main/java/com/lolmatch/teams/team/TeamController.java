@@ -19,14 +19,14 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("")
+@RequestMapping("/teams")
 @RequiredArgsConstructor
 public class TeamController {
 	
 	private final TeamService teamService;
 	
-	@GetMapping
-	public TeamListDTO getTeams(@ParameterObject Pageable pageable,  @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
+	@GetMapping()
+	public TeamListDTO getTeams(@ParameterObject Pageable pageable, @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
 		log.info("Get list of teams request: " + pageable + ";" + country + ";" + minimalRank);
 		return teamService.getTeamsFilteredAndPaginated(pageable, country, minimalRank);
 	}
@@ -41,11 +41,13 @@ public class TeamController {
 	@GetMapping("/{criteria}")
 	@Operation( summary = "Searches team either by ID if given criteria is proper UUID or else criteria is a team's name")
 	public TeamDTO getTeamById(@PathVariable String criteria) {
+		log.info("get team by criteria: " + criteria);
 		return teamService.findTeamByCriteria(criteria);
 	}
 	
 	@DeleteMapping("/{id}")
 	public void deleteTeamById(@PathVariable UUID id, Principal principal) {
+		log.info("delete team with id: " + id);
 		teamService.deleteTeamById(id, principal);
 	}
 	
