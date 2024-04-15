@@ -1,5 +1,7 @@
 package com.lolmatch.teams.user;
 
+import com.lolmatch.teams.team.TeamRepository;
+import com.lolmatch.teams.team.dto.TeamDTO;
 import com.lolmatch.teams.user.dto.UserDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import java.util.UUID;
 public class UserService {
 	// TODO - add win rate and profile picture fetching
 	private final UserRepository userRepository;
+	private final TeamRepository teamRepository;
 	
 	@Transactional
 	public void saveUser(UserDTO dto) {
@@ -22,8 +25,11 @@ public class UserService {
 	
 	@Transactional(readOnly = true)
 	public UserDTO getUserById(UUID id) {
-		// TODO - sprawdzić czy działa
 		return userRepository.findUserById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found."));
-		//return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found.")).toDto();
+	}
+	
+	@Transactional
+	public TeamDTO getUserTeamById(UUID id){
+		return teamRepository.findTeamByUser(id).orElseThrow(() -> new EntityNotFoundException("No team with user with id: " + id + ", has been found.")).toDto();
 	}
 }
