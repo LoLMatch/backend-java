@@ -19,19 +19,19 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("")
+@RequestMapping("/teams")
 @RequiredArgsConstructor
 public class TeamController {
 	
 	private final TeamService teamService;
 	
-	@GetMapping(value = "/")
+	@GetMapping()
 	public TeamListDTO getTeams(@ParameterObject Pageable pageable, @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
 		log.info("Get list of teams request: " + pageable + ";" + country + ";" + minimalRank);
 		return teamService.getTeamsFilteredAndPaginated(pageable, country, minimalRank);
 	}
 	
-	@PostMapping
+	@PostMapping()
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public TeamDTO addTeam(@Valid @RequestBody AddTeamRequest dto, Principal principal) {
 		log.info("add team request: " + dto.toString() + ";" + principal);
