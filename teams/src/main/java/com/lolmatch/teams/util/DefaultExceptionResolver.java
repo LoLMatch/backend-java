@@ -22,7 +22,7 @@ public class DefaultExceptionResolver {
 	@ExceptionHandler(value = EntityNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseEntity<ErrorResponse> entityNotFoundExceptionResolver(EntityNotFoundException e) {
-		return new ResponseEntity<>(ErrorResponse.of(e.getMessage(), 404), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(ErrorResponse.of(e.getMessage(), 404), HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(value = MethodArgumentNotValidException.class)

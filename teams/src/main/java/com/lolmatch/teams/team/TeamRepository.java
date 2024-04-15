@@ -19,4 +19,7 @@ public interface TeamRepository extends JpaRepository<Team, UUID> {
 	
 	@Query(value = "SELECT t FROM Team t JOIN FETCH User u on t = u.team WHERE t.id = ?1")
 	Optional<Team> findTeamById(UUID id);
+	
+	@Query(value = "SELECT t FROM Team t JOIN FETCH User u on t = u.team WHERE u.id = ?1")
+	Optional<Team> findTeamByUser(UUID id);
 }
