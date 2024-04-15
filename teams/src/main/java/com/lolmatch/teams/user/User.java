@@ -54,6 +54,6 @@ public class User {
 	}
 	
 	public UserDTO toDto() {
-		return new UserDTO(id, username, profilePictureId, winRate);
+		return new UserDTO(id, username, profilePictureId, winRate, team.getId());
 	}
 }

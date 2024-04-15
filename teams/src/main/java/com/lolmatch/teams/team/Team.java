@@ -23,13 +23,14 @@ public class Team {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
+	@Column(unique = true)
 	private String name;
 	
 	@Column(columnDefinition = "TEXT")
 	private String description;
 	
 	@JsonBackReference
-	@OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
 	private Set<User> members;
 	
 	private boolean isPublic;

@@ -25,9 +25,9 @@ public class TeamController {
 	private final TeamService teamService;
 	
 	@GetMapping
-	public TeamListDTO getTeams(@ParameterObject Pageable pageable,  @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank) {
+	public TeamListDTO getTeams(@ParameterObject Pageable pageable,  @RequestParam Optional<String> country, @RequestParam Optional<Rank> minimalRank, @RequestParam Optional<String> name) {
 		log.info("Get list of teams request: " + pageable + ";" + country + ";" + minimalRank);
-		return teamService.getTeamsFilteredAndPaginated(pageable, country, minimalRank);
+		return teamService.getTeamsFilteredAndPaginated(pageable, country, minimalRank, name);
 	}
 	
 	@PostMapping()
