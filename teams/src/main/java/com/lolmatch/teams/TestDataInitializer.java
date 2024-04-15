@@ -24,6 +24,7 @@ public class TestDataInitializer {
 	
 	public void initUsers() {
 		Team team = new Team();
+		team.setId(UUID.randomUUID());
 		team.setName("Best team");
 		team.setDescription("Team description ----");
 		team.setPublic(true);
@@ -33,6 +34,7 @@ public class TestDataInitializer {
 		team.setTeamWinRate(BigDecimal.valueOf(69.69));
 		Team team1 = teamRepository.save(team);
 		
+		team.setId(UUID.randomUUID());
 		team.setName("ESSA TEAM");
 		team.setDescription("Team description ----1234");
 		team.setPublic(true);
@@ -42,6 +44,7 @@ public class TestDataInitializer {
 		team.setTeamWinRate(BigDecimal.valueOf(1.15));
 		Team team2 = teamRepository.save(team);
 		
+		team.setId(UUID.randomUUID());
 		team.setName("PDW");
 		team.setDescription("POZDRO DLA KUMATYCH");
 		team.setPublic(false);
@@ -59,11 +62,10 @@ public class TestDataInitializer {
 		user.setTeam(team1);
 		User bob = userRepository.save(user);
 		
-		
 		user.setId(UUID.fromString("c8973806-df29-4ae7-8bab-79a2c52b7193"));
 		user.setUsername("ash");
 		user.setWinRate(BigDecimal.valueOf(48.50));
-		user.setTeam(team1);
+		user.setTeam(null);
 		User ash = userRepository.save(user);
 		
 		user.setId(UUID.fromString("21d8e0d9-2545-4404-925e-e245032ec5cc"));
