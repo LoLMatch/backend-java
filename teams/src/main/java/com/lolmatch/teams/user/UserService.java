@@ -1,6 +1,7 @@
 package com.lolmatch.teams.user;
 
 import com.lolmatch.teams.user.dto.UserDTO;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public UserDTO getUserById(UUID id) {
 		// TODO - sprawdzić czy działa
-		return userRepository.findUserById(id).orElseThrow();
+		return userRepository.findUserById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found."));
 		//return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found.")).toDto();
 	}
 }

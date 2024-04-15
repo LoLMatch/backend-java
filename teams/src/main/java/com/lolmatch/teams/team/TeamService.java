@@ -75,9 +75,9 @@ public class TeamService {
 	TeamDTO findTeamByCriteria(String criteria) {
 		try{
 			UUID id = UUID.fromString(criteria);
-			return teamRepository.findTeamById(id).orElseThrow().toDto();
+			return teamRepository.findTeamById(id).orElseThrow(() -> new EntityNotFoundException("No team with id: " + criteria + ", has been found.")).toDto();
 		} catch (IllegalArgumentException e){
-			return teamRepository.findTeamByName(criteria).orElseThrow().toDto();
+			return teamRepository.findTeamByName(criteria).orElseThrow(() -> new EntityNotFoundException("No team with name: " + criteria + ", has been found.")).toDto();
 		}
 	}
 	
