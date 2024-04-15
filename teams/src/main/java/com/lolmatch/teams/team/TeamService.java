@@ -32,9 +32,18 @@ public class TeamService {
 	
 	private final AmqpTeamChangesTransmitter transmitter;
 	
-	TeamListDTO getTeamsFilteredAndPaginated(Pageable pageable, Optional<String> country, Optional<Rank> rank) {
+	@Transactional(readOnly = true)
+	TeamListDTO getTeamsFilteredAndPaginated(Pageable pageable, Optional<String> country, Optional<Rank> rank, Optional<String> name) {
 		Rank minimalRank = rank.orElse(Rank.IRON_IV);
 		Page<Team> teams;
+		if (name.isPresent()){
+			Optional<Team> team = teamRepository.findTeamByName(name.get());
+			if (team.isPresent()){
+				return new TeamListDTO(List.of(team.get().toDto()), 1, 0, 1);
+			} else {
+				throw new EntityNotFoundException("No team with name: " + name.get());
+			}
+		}
 		if (country.isEmpty()) {
 			teams = teamRepository.findTeamsByMinimalRankGreaterThan(pageable, minimalRank);
 		} else {
@@ -72,7 +81,7 @@ public class TeamService {
 	}
 	
 	TeamDTO findTeamById(UUID id) {
-		return getTeamById(id).toDto();
+		return teamRepository.findTeamById(id).orElseThrow().toDto();
 	}
 	
 	@Transactional
@@ -136,8 +145,6 @@ public class TeamService {
 			log.info("Tried to add more than 10 members to a team: "  + userId + ";" + teamId);
 			throw new IllegalArgumentException("Team cannot have more than 10 members");
 		}
-		//User member = userRepository.findById(request.userId()).orElseThrow(() -> new EntityNotFoundException("No user with id: " + request.userId() + ", has been found."));
-		//member.setTeam(team);
 		User member = userRepository.getReferenceById(userId);
 		team.addMember(member);
 		transmitter.transmitUserChange(team.getId(), userId, AmqpTeamChangesTransmitter.UserChangeEnum.JOIN);
@@ -152,13 +159,9 @@ public class TeamService {
 			log.info("Tried to kick another member from a team: teamId - " + team + " principal: " + principal);
 			throw new AccessDeniedException("Member may leave team or can be kicked out only by team's leader");
 		}
-		//User member = getUserById(userId);
-		//member.setTeam(null);
-		//userRepository.save(member);
 		User member = userRepository.getReferenceById(userId);
 		team.removeMember(member);
 		transmitter.transmitUserChange(team.getId(), userId, AmqpTeamChangesTransmitter.UserChangeEnum.LEAVE);
-		//teamRepository.save(team);
 	}
 	
 	List<TeamDTO> mapTeamListToTeamDTOList(List<Team> teams) {
