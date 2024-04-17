@@ -10,9 +10,9 @@ import java.util.UUID;
 
 public interface TeamRepository extends JpaRepository<Team, UUID> {
 	
-	Page<Team> findTeamsByMinimalRankGreaterThan(Pageable pageable, Rank rank);
+	Page<Team> findTeamsByMinimalRankLessThanEqual(Pageable pageable, Rank rank);
 	
-	Page<Team> findTeamsByMinimalRankGreaterThanAndTeamCountryEquals(Pageable pageable, Rank rank, String teamCountry);
+	Page<Team> findTeamsByMinimalRankLessThanEqualAndTeamCountryEquals(Pageable pageable, Rank rank, String teamCountry);
 	
 	@Query(value = "SELECT t FROM Team t LEFT JOIN FETCH User u on t = u.team WHERE t.name = ?1")
 	Optional<Team> findTeamByName(String name);
