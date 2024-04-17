@@ -14,10 +14,10 @@ public interface TeamRepository extends JpaRepository<Team, UUID> {
 	
 	Page<Team> findTeamsByMinimalRankGreaterThanAndTeamCountryEquals(Pageable pageable, Rank rank, String teamCountry);
 	
-	@Query(value = "SELECT t FROM Team t JOIN FETCH User u on t = u.team WHERE t.name = ?1")
+	@Query(value = "SELECT t FROM Team t LEFT JOIN FETCH User u on t = u.team WHERE t.name = ?1")
 	Optional<Team> findTeamByName(String name);
 	
-	@Query(value = "SELECT t FROM Team t JOIN FETCH User u on t = u.team WHERE t.id = ?1")
+	@Query(value = "SELECT t FROM Team t LEFT JOIN FETCH User u on t = u.team WHERE t.id = ?1")
 	Optional<Team> findTeamById(UUID id);
 	
 	@Query(value = "SELECT t FROM Team t INNER JOIN User u on t = u.team WHERE u.id = ?1")
