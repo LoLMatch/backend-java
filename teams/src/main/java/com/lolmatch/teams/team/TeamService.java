@@ -34,12 +34,12 @@ public class TeamService {
 	
 	@Transactional(readOnly = true)
 	TeamListDTO getTeamsFilteredAndPaginated(Pageable pageable, Optional<String> country, Optional<Rank> rank) {
-		Rank minimalRank = rank.orElse(Rank.IRON_IV);
+		Rank minimalRank = rank.orElse(Rank.DIAMOND_I);
 		Page<Team> teams;
 		if (country.isEmpty()) {
-			teams = teamRepository.findTeamsByMinimalRankGreaterThan(pageable, minimalRank);
+			teams = teamRepository.findTeamsByMinimalRankLessThanEqual(pageable, minimalRank);
 		} else {
-			teams = teamRepository.findTeamsByMinimalRankGreaterThanAndTeamCountryEquals(pageable, minimalRank, country.get());
+			teams = teamRepository.findTeamsByMinimalRankLessThanEqualAndTeamCountryEquals(pageable, minimalRank, country.get());
 		}
 		return new TeamListDTO(mapTeamListToTeamDTOList(teams.getContent()), teams.getSize(), teams.getNumber(), teams.getTotalElements());
 	}
