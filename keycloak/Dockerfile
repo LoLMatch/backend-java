@@ -10,7 +10,7 @@ RUN mvn -f /app/keycloak/pom.xml clean install
 
 RUN ls -la /app/keycloak/target
 
-FROM keycloak/keycloak:23.0.6
+FROM keycloak/keycloak:24.0.1
 
 # to trzeba z pliku konfiguracyjnego wczytać, poki co na sztywno zostawiamy
 ARG AMQP_USERNAME=admin
@@ -57,4 +57,4 @@ RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysi
 WORKDIR /
 
 COPY ./keycloak/realm.json /opt/keycloak/data/import/realm.json
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm", "--features=declarative-user-profile"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm"]
