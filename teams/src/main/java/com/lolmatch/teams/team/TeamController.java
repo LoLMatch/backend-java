@@ -53,16 +53,19 @@ public class TeamController {
 	
 	@PatchMapping("/{id}")
 	public TeamDTO editTeamById(@Valid @RequestBody AddTeamRequest dto, Principal principal, @PathVariable UUID id) {
+		log.info("Edit team request: " + dto.toString() + "; principal: " + principal.getName() + "; team id: " + id);
 		return teamService.updateTeam(id, dto, principal);
 	}
 	
 	@PostMapping("/{teamId}/users")
 	public TeamDTO addUserToTeam(@RequestBody AddUserToTeamRequest request, Principal principal, @PathVariable UUID teamId) {
+		log.info("Add user to a team request: " + request.toString() + "; principal: " + principal.getName() + "; team id: " + teamId);
 		return teamService.addUserToTeam(request.userId(), teamId, request.password(), principal);
 	}
 	
 	@DeleteMapping("/{teamId}/users/{userId}")
 	public void deleteUserFromTeam(@PathVariable UUID userId, Principal principal, @PathVariable UUID teamId) {
+		log.info(("Delete user from a team userID: " + userId + "; teamId: " + teamId  + "; principal: " + principal.getName()));
 		teamService.deleteUserFromTeam(teamId, userId, principal);
 	}
 }
