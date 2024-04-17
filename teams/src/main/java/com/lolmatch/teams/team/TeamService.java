@@ -151,13 +151,20 @@ public class TeamService {
 	
 	@Transactional
 	void deleteUserFromTeam(UUID teamId, UUID userId, Principal principal) {
-		Team team = getTeamById(teamId);
+		Team team = teamRepository.findTeamById(teamId).orElseThrow(EntityNotFoundException::new);
 		if (!principal.getName().equals(userId.toString()) && !principal.getName().equals(team.getLeaderId().toString())) {
 			log.info("Tried to kick another member from a team: teamId - " + team + " principal: " + principal);
 			throw new AccessDeniedException("Member may leave team or can be kicked out only by team's leader");
 		}
 		User member = userRepository.getReferenceById(userId);
 		team.removeMember(member);
+		if (team.getLeaderId().equals(userId)){
+			team.getMembers().forEach(teamMember -> teamMember.setTeam(null));
+			teamRepository.delete(team);
+		}
+		if (team.getMembers().isEmpty()){
+			teamRepository.delete(team);
+		}
 		transmitter.transmitUserChange(team.getId(), userId, AmqpTeamChangesTransmitter.UserChangeEnum.LEAVE);
 	}
 	
