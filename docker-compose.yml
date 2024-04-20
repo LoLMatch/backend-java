@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   database:
     build:
       context: .
       dockerfile: database/Dockerfile
-    image: ${REPOSITORY}postgres:${TAG}
+    image: postgres:${TAG}
     container_name: "database"
     platform: ${PLATFORM}
     environment:
@@ -24,7 +22,7 @@ services:
       dockerfile: rabbitmq/Dockerfile
     container_name: "rabbitmq"
     platform: ${PLATFORM}
-    image: ${REPOSITORY}rabbitmq:${TAG}
+    image: rabbitmq:${TAG}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -41,7 +39,7 @@ services:
       context: .
       dockerfile: keycloak/Dockerfile
     container_name: "keycloak"
-    image: ${REPOSITORY}keycloak:${TAG}
+    image: keycloak:${TAG}
     platform: ${PLATFORM}
     ports:
       - "8443:8443"
@@ -65,7 +63,7 @@ services:
       dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
     platform: ${PLATFORM}
-    image: ${REPOSITORY}api-gateway:${TAG}
+    image: api-gateway:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=dev # extra logs + docker settings -> application-dev.properties
     ports:
@@ -81,7 +79,7 @@ services:
       dockerfile: calendar/Dockerfile
     container_name: calendar
     platform: ${PLATFORM}
-    image: ${REPOSITORY}calendar:${TAG}
+    image: calendar:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=prod # prod - cors na localhost:4200
     ports:
@@ -100,7 +98,7 @@ services:
       dockerfile: chat/Dockerfile
     platform: ${PLATFORM}
     container_name: "chat-service"
-    image: ${REPOSITORY}chat-service:${TAG}
+    image: chat-service:${TAG}
     ports:
       - '8081:8080'
     networks:
@@ -117,7 +115,7 @@ services:
       dockerfile: teams/Dockerfile
     platform: ${PLATFORM}
     container_name: "teams-service"
-    image: ${REPOSITORY}teams-service:${TAG}
+    image: teams-service:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     ports:
