@@ -60,5 +60,5 @@ jobs:
       continue-on-error: true
 
     - name: Terraform apply
-      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -var "project=${{ secrets.GCP_PROJECT_ID }}" --var-file=.tfvars
+      run: terraform -chdir=${{ env.PATH_TO_TF }} apply -var "project=${{ secrets.GCP_PROJECT_ID }}" --var-file=.tfvars -auto-approve
 
