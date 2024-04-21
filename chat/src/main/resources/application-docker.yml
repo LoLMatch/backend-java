@@ -29,7 +29,7 @@ spring:
         password: guest
 server:
     servlet:
-        context-path: /api/teams
+        context-path: /api/chat
 eureka:
     client:
         serviceUrl:
