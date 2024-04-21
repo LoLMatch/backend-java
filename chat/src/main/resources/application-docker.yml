@@ -1,3 +1,4 @@
+# do odpalania lokalnie w docker-compose
 spring:
     application:
         name: chat
@@ -15,6 +16,7 @@ spring:
                 default_schema: public
         database: postgresql
         database-platform: org.hibernate.dialect.PostgreSQLDialect
+        open-in-view: false
     jackson:
         deserialization:
           fail-on-unknown-properties: false

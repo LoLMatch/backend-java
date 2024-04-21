@@ -12,7 +12,7 @@ public class ChatService {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(ChatService.class, args);
 
-		if (context.getEnvironment().matchesProfiles("local", "dev")){
+		if (context.getEnvironment().matchesProfiles("local", "docker")){
 			context.getBean(TestDataInitializer.class).initUsers();
 		}
 	}

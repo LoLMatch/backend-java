@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-@Profile({"local", "dev"})
+@Profile({"local", "docker"})
 public class TestDataInitializer {
 	
 	private final UserRepository userRepository;

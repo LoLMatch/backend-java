@@ -1,4 +1,4 @@
-# konfiguracja do testów lokalnych - nie w kontenerze
+# konfiguracja do testów lokalnych, nie w kontenerze
 spring:
     application:
         name: chat-service
