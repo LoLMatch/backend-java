@@ -1,7 +1,8 @@
-# do odpalania lokalnie w docker-compose
+
+# konfiguracja do odpalania w docker-compose lokalnie
 spring:
     application:
-        name: chat
+        name: chat-service
     datasource:
         url: jdbc:postgresql://chat-database:5432/chat
         username: postgres
