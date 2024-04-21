@@ -1,4 +1,6 @@
 spring:
+    application:
+        name: chat
     datasource:
         url: jdbc:postgresql://chat-database:5432/chat
         username: postgres
@@ -25,3 +27,12 @@ spring:
         addresses: rabbitmq
         username: guest
         password: guest
+server:
+    servlet:
+        context-path: /api/chat
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:8761/eureka/
+        register-with-eureka: true
+        fetch-registry: true

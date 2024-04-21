@@ -31,6 +31,7 @@
         <module>keycloak</module>
         <module>chat</module>
         <module>calendar</module>
+        <module>discovery-server</module>
     </modules>
 
     <dependencyManagement>
