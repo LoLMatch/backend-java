@@ -1,4 +1,4 @@
-# do odpalania na prod
+# do odpalania w docker-compose
 spring:
     application:
         name: teams-service
@@ -8,9 +8,9 @@ spring:
         password: postgres
         driver-class-name: org.postgresql.Driver
     jpa:
-        show-sql: false
+        show-sql: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: create-drop
         properties:
             hibernate:
                 default_schema: public
