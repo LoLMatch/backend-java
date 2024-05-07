@@ -50,7 +50,7 @@ public class AmqpTeamsServiceReceiver {
 	
 	@RabbitListener(queues = teamChangeQueue)
 	public void listenToTeamChange(String in) throws JsonProcessingException {
-		log.info("Message from tean-change-queue: " + in);
+		log.info("Message from team-change-queue: " + in);
 		TeamChangeMessage msg = objectMapper.readValue(in, TeamChangeMessage.class);
 		
 		switch (msg.type) {
