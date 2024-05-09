@@ -15,7 +15,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: "pg_isready -U postgres"
 
@@ -33,7 +33,7 @@ services:
     ports:
       - "5433:5432"
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: "pg_isready -U postgres"
 
@@ -51,7 +51,7 @@ services:
     ports:
       - "5434:5432"
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: "pg_isready -U postgres"
 
@@ -69,7 +69,7 @@ services:
     ports:
       - "5435:5432"
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: "pg_isready -U postgres"
 
@@ -84,7 +84,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: "rabbitmq-diagnostics -q ping"
 
@@ -108,7 +108,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: ["CMD-SHELL", "echo -n > /dev/tcp/127.0.0.1/8443"]
 
@@ -124,7 +124,7 @@ services:
     ports:
       - '8080:8080'
     networks:
-      - network
+      - lm-network
     depends_on:
       - keycloak
 
@@ -140,7 +140,7 @@ services:
     ports:
       - '8888:8888'
     networks:
-      - network
+      - lm-network
     depends_on:
       keycloak:
         condition: service_healthy
@@ -161,7 +161,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
-      - network
+      - lm-network
     depends_on:
       keycloak:
         condition: service_healthy
@@ -182,7 +182,7 @@ services:
     ports:
       - '8082:8080'
     networks:
-      - network
+      - lm-network
     depends_on:
       keycloak:
         condition: service_healthy
@@ -203,9 +203,10 @@ services:
     ports:
       - '8761:8761'
     networks:
-      - network
+      - lm-network
 
 networks:
-  network:
+  lm-network:
+    name: lm-network
     driver: bridge
 
