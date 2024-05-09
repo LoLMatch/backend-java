@@ -1,7 +1,7 @@
 # do odpalania na prod
 spring:
     application:
-        name: teams-service
+        name: teams
     datasource:
         url: jdbc:postgresql://teams-database:5432/teams
         username: postgres
