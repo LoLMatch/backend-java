@@ -72,7 +72,5 @@ public class AmqpTeamsServiceReceiver {
 	
 	public enum UserChangeEnum {JOIN, LEAVE}
 	
-	;
-	
 	public enum TeamChangeEnum {CREATE, UPDATE, DELETE}
 }

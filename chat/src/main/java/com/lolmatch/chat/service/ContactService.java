@@ -37,20 +37,21 @@ public class ContactService {
 	public List<Contact> getContactsForUser(UUID id) {
 		return contactRepository.findAllByUserId(id);
 	}
-	// TODO - to jest do zapisywania kontaktów jak będą przychodzić z kolejki
+	
 	public void saveContact(UUID firstUserId, UUID secondUserId) {
+		// TODO - powinno być sprawdzane czy taki kontakt już istnieje
 		User first = userService.getUserByUUID(firstUserId);
 		User second = userService.getUserByUUID(secondUserId);
 		
 		Contact firstContact = new Contact();
 		firstContact.setUser(first);
-		firstContact.setContactId(second.getId());
-		firstContact.setContactUsername(second.getUsername());
+		firstContact.setContact(second);
+		//firstContact.setContactUsername(second.getUsername());
 		
 		Contact secondContact = new Contact();
 		secondContact.setUser(second);
-		secondContact.setContactId(first.getId());
-		secondContact.setContactUsername(first.getUsername());
+		secondContact.setContact(first);
+		//secondContact.setContactUsername(first.getUsername());
 		
 		contactRepository.save(firstContact);
 		contactRepository.save(secondContact);
@@ -82,7 +83,11 @@ public class ContactService {
 				})
 				.collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
 		List<ContactDTO> contacts = user.getContacts().stream().map(contact -> {
-			MessageDTO lastMessage = lastMessages.getOrDefault(contact.getContactId(), null);
+			int ppId = contact.getContact().getProfilePictureId();
+			if ( ppId == 0){
+				ppId = userService.updateProfilePicture(contact.getContact().getId());
+			}
+			MessageDTO lastMessage = lastMessages.getOrDefault(contact.getContact().getId(), null);
 			String lastMessageContent;
 			UUID lastMessageSenderId;
 			Timestamp lastMessageTimestamp;
@@ -92,10 +97,10 @@ public class ContactService {
 				lastMessageTimestamp = null;
 			} else {
 				lastMessageContent = lastMessage.content();
-				lastMessageSenderId = lastMessage.senderId() == id ? id : contact.getContactId();
+				lastMessageSenderId = lastMessage.senderId() == id ? id : contact.getContact().getId();
 				lastMessageTimestamp = lastMessage.createdAt();
 			}
-			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContactId()));
+			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContact().getId()));
 			boolean isActive;
 			Timestamp lastActiveTimestamp;
 			if (simpUser != null) {
@@ -113,15 +118,16 @@ public class ContactService {
 				}
 			}
 			return new ContactDTO(
-					contact.getContactId(),
-					contact.getContactUsername(),
+					contact.getContact().getId(),
+					contact.getContact().getUsername(),
 					"USER",
-					unreadMessages.get(contact.getContactId()),
+					unreadMessages.get(contact.getContact().getId()),
 					lastMessageContent,
 					lastMessageSenderId,
 					isActive,
 					lastActiveTimestamp,
-					lastMessageTimestamp
+					lastMessageTimestamp,
+					ppId
 			);
 		}).collect(Collectors.toList());
 		if (user.getGroup() != null) {
@@ -160,7 +166,8 @@ public class ContactService {
 					lastMessageSenderId,
 					activeStatus,
 					lastActiveTimestamp,
-					lastMessageTimestamp
+					lastMessageTimestamp,
+					0
 			);
 			contacts.add(contact);
 		}

@@ -25,7 +25,7 @@ public class StatusService {
 		List<Contact> contacts = contactService.getContactsForUser(UUID.fromString(event.getStatusChangeDTO().id()));
 		log.info("Status of user: " + event.getStatusChangeDTO().id() + ", changed to: " + event.getStatusChangeDTO().status());
 		for (Contact contact : contacts) {
-			messagingTemplate.convertAndSend("/topic/chat/" + contact.getContactId(), event.getStatusChangeDTO());
+			messagingTemplate.convertAndSend("/topic/chat/" + contact.getContact().getId(), event.getStatusChangeDTO());
 		}
 	}
 }

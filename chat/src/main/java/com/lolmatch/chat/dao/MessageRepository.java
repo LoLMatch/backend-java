@@ -48,10 +48,10 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
    """
 	SELECT new com.lolmatch.chat.dto.MessageDTO(m.id, m.content, m.createdAt, m.readAt, m.sender.id, m.recipient.id)
 	FROM Message m WHERE (m.sender.id = ?1 OR m.recipient.id = ?1)
-	AND (m.sender.id IN (SELECT c.contactId FROM Contact c WHERE c.user.id = ?1) OR m.recipient.id IN (SELECT c.contactId FROM Contact c WHERE c.user.id = ?1))
+	AND (m.sender.id IN (SELECT c.user.id FROM Contact c WHERE c.user.id = ?1) OR m.recipient.id IN (SELECT c.user.id FROM Contact c WHERE c.user.id = ?1))
 	AND m.createdAt = (SELECT MAX(m2.createdAt) FROM Message m2 WHERE ((m2.sender = m.sender AND m2.recipient = m.recipient) OR (m2.sender = m.recipient AND m2.recipient = m.sender))
 	ORDER BY m.createdAt DESC)
 	""")
 	// TODO - sprawdzić czy tutaj będzie dodatkowo pobierać userów, jak tak to dodać JOIN FETCH Users u
-	List<MessageDTO> getLastMessagesBetweenUserAndContact(UUID userId); // GIT
+	List<MessageDTO> getLastMessagesBetweenUserAndContact(UUID userId);
 }

@@ -12,6 +12,7 @@ public record ContactDTO(
 		UUID lastMessageSenderId,
 		Boolean isActive,
 		Timestamp lastActiveTimestamp,
-		Timestamp lastMessageTimestamp
+		Timestamp lastMessageTimestamp,
+		int profilePictureId
 ) {
 }

@@ -23,6 +23,9 @@ public class User {
 	@Column(name = "username")
 	private String username;
 	
+	@Column(name = "profile_picture_id")
+	private int profilePictureId;
+	
 	@ManyToOne
 	@JsonManagedReference
 	@JoinColumn(name = "group_id")
@@ -31,6 +34,10 @@ public class User {
 	@JsonBackReference
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private Set<Contact> contacts;
+	
+	@JsonBackReference
+	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
+	private Set<Contact> backContacts;
 	
 	@JsonBackReference
 	@OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)

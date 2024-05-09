@@ -30,18 +30,22 @@ public class TestDataInitializer {
 		User user = new User();
 		user.setId(UUID.fromString("fd0a67ca-1fe7-4759-854b-4ba0a1ac818e"));
 		user.setUsername("bob");
+		user.setProfilePictureId(2);
 		User bob = userRepository.save(user);
 		
 		user.setId(UUID.fromString("c8973806-df29-4ae7-8bab-79a2c52b7193"));
 		user.setUsername("ash");
+		user.setProfilePictureId(0);
 		User ash = userRepository.save(user);
 		
 		user.setId(UUID.fromString("21d8e0d9-2545-4404-925e-e245032ec5cc"));
 		user.setUsername("rob");
+		user.setProfilePictureId(0);
 		User rob = userRepository.save(user);
 		
 		user.setId(UUID.fromString("b4b70f3a-7aa4-4d53-8020-e466d1e1a019"));
 		user.setUsername("user");
+		user.setProfilePictureId(45);
 		User user1 = userRepository.save(user);
 		
 		createContact(bob, rob);
@@ -69,14 +73,14 @@ public class TestDataInitializer {
 	private void createContact(User first, User second) {
 		Contact contact = new Contact();
 		contact.setUser(first);
-		contact.setContactId(second.getId());
-		contact.setContactUsername(second.getUsername());
+		contact.setContact(second);
+		// contact.setContactUsername(second.getUsername());
 		contactRepository.save(contact);
 		
 		Contact backContact = new Contact();
 		backContact.setUser(second);
-		backContact.setContactId(first.getId());
-		backContact.setContactUsername(first.getUsername());
+		backContact.setContact(first);
+		//backContact.setContactUsername(first.getUsername());
 		contactRepository.save(backContact);
 	}
 	

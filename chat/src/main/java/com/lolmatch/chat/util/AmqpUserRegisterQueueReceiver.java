@@ -21,7 +21,7 @@ public class AmqpUserRegisterQueueReceiver {
 	private final UserService userService;
 	
 	@Bean
-	public Queue myQueue() {
+	public Queue userRegisterQueue() {
 		return new Queue(queueName, true);
 	}
 	
