@@ -2,10 +2,9 @@ package com.lolmatch.teams.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lolmatch.teams.team.Team;
+import com.lolmatch.teams.user.dto.UserDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -13,8 +12,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
+@AllArgsConstructor
 public class User {
 	
 	@Id
@@ -28,6 +29,8 @@ public class User {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "team_id", referencedColumnName = "id")
 	private Team team;
+	
+	private int profilePictureId;
 	
 	private BigDecimal winRate;
 	
@@ -48,5 +51,9 @@ public class User {
 	@Override
 	public int hashCode() {
 		return id.hashCode();
+	}
+	
+	public UserDTO toDto() {
+		return new UserDTO(id, username, profilePictureId, winRate, team.getId());
 	}
 }

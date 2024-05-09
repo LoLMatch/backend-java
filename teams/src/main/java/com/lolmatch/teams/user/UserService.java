@@ -1,31 +1,35 @@
 package com.lolmatch.teams.user;
 
+import com.lolmatch.teams.team.TeamRepository;
+import com.lolmatch.teams.team.dto.TeamDTO;
 import com.lolmatch.teams.user.dto.UserDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	// TODO - dodać pobieranie winrate z pythona w jakiś sposób, raczej po HTTP
+	// TODO - add win rate and profile picture fetching
 	private final UserRepository userRepository;
+	private final TeamRepository teamRepository;
 	
-	public static UserDTO mapUserToUserDTO(User user) {
-		return new UserDTO(user.getId(), user.getUsername(), user.getWinRate());
-	}
-	
+	@Transactional
 	public void saveUser(UserDTO dto) {
-		User user = new User();
-		user.setId(dto.id());
-		user.setUsername(dto.username());
-		
+		User user = dto.toUser();
 		userRepository.save(user);
 	}
 	
-	public User getUserById(UUID id) {
-		return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found."));
+	@Transactional(readOnly = true)
+	public UserDTO getUserById(UUID id) {
+		return userRepository.findUserById(id).orElseThrow(() -> new EntityNotFoundException("No user with id: " + id + ", has been found."));
+	}
+	
+	@Transactional
+	public TeamDTO getUserTeamById(UUID id){
+		return teamRepository.findTeamByUser(id).orElseThrow(() -> new EntityNotFoundException("No team with user with id: " + id + ", has been found.")).toDto();
 	}
 }
