@@ -1,7 +1,7 @@
 # do odpalania w docker-compose
 spring:
     application:
-        name: teams-service
+        name: teams
     datasource:
         url: jdbc:postgresql://database:5432/teams
         username: teams
@@ -31,3 +31,9 @@ spring:
 server:
     servlet:
         context-path: /api/teams
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://discovery-server:8761/eureka/
+        register-with-eureka: true
+        fetch-registry: true

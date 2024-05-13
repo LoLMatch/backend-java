@@ -3,6 +3,7 @@ package com.lolmatch.calendar;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @SpringBootApplication
+@EnableDiscoveryClient
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class CalendarApplication {
 

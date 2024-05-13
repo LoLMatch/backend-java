@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/calendar/meetings")
+@RequestMapping("/meetings")
 @RequiredArgsConstructor
 public class MeetingController {
 

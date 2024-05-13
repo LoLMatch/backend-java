@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: "pg_isready -U postgres"
 
@@ -30,7 +30,7 @@ services:
       - hostname=rabbitmq
       - RABBITMQ_FEATURE_FLAGS=implicit_default_bindings
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: "rabbitmq-diagnostics -q ping"
 
@@ -50,7 +50,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - network
+      - lm-network
     healthcheck:
       test: ["CMD-SHELL", "echo -n > /dev/tcp/127.0.0.1/8443"]
       retries: 5
@@ -65,11 +65,11 @@ services:
     platform: ${PLATFORM}
     image: api-gateway:${TAG}
     environment:
-      - SPRING_PROFILES_ACTIVE=dev # extra logs + docker settings -> application-dev.properties
+      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - '8080:8080'
     networks:
-      - network
+      - lm-network
     depends_on:
       - keycloak
 
@@ -81,11 +81,11 @@ services:
     platform: ${PLATFORM}
     image: calendar:${TAG}
     environment:
-      - SPRING_PROFILES_ACTIVE=prod # prod - cors na localhost:4200
+      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - '8888:8888'
     networks:
-      - network
+      - lm-network
     depends_on:
       keycloak:
         condition: service_healthy
@@ -101,8 +101,10 @@ services:
     image: chat-service:${TAG}
     ports:
       - '8081:8080'
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
-      - network
+      - lm-network
     depends_on:
       keycloak:
         condition: service_healthy
@@ -117,11 +119,11 @@ services:
     container_name: "teams-service"
     image: teams-service:${TAG}
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - '8082:8080'
     networks:
-      - network
+      - lm-network
     depends_on:
       keycloak:
         condition: service_healthy
@@ -130,6 +132,21 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  discovery-server:
+    build:
+      context: .
+      dockerfile: discovery-server/Dockerfile
+    container_name: discovery-server
+    platform: ${PLATFORM}
+    image: discovery-server:${TAG}
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - '8761:8761'
+    networks:
+      - lm-network
+
 networks:
-  network:
+  lm-network:
+    name: lm-network
     driver: bridge
