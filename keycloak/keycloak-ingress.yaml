@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: idp.lolmatch.click
+    annotations:
+        kubernetes.io/ingress.global-static-ip-name: "keycloak-ip"
+spec:
+    ingressClassName: nginx
+    tls:
+        -   hosts:
+                - idp.lolmatch.click
+            secretName: idp-tls-secret
+    rules:
+        -   host: idp.lolmatch.click
+            http:
+                paths:
+                    -   path: /
+                        pathType: Prefix
+                        backend:
+                            service:
+                                name: keycloak
+                                port:
+                                    number: 8080
