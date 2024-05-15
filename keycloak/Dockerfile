@@ -40,8 +40,12 @@ ENV KEYCLOAK_ADMIN_PASSWORD=password
 
 # Set port
 ENV KC_HTTP_ENABLED=true
-ENV KC_HTTP_PORT=8443
-ENV KC_HTTPS_PORT=8444
+ENV KC_HTTP_PORT=8080
+# ENV KC_HTTPS_PORT=8444
+ENV KC_HOSTNAME=idp.lolmatch.click
+ENV KC_HTTP_ENABLED=true
+ENV KC_PROXY=edge
+# to powyżej do zmiany na KC_PROXY_HEADERS jak bede wiedział jakie są headery
 
 # Add providers
 WORKDIR /opt/keycloak/providers
@@ -50,8 +54,8 @@ COPY --from=build --chown=keycloak:keycloak /app/keycloak/target/*.jar .
 # Ponizsze jest do zmiany, bo .jar powinien byc wynikiem builda
 COPY --chown=keycloak:keycloak /keycloak/*.jar  .
 
-WORKDIR /opt/keycloak
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
+# WORKDIR /opt/keycloak
+# RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
 
 WORKDIR /
 

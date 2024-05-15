@@ -92,12 +92,12 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  chat-service:
+  chat:
     build:
       context: .
       dockerfile: chat/Dockerfile
     platform: ${PLATFORM}
-    container_name: "chat-service"
+    container_name: "chat"
     image: chat-service:${TAG}
     ports:
       - '8081:8080'
