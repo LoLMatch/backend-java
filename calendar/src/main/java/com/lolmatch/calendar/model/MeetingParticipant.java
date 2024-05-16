@@ -31,7 +31,7 @@ public class MeetingParticipant {
     @JsonBackReference
     private MeetingEntity meeting;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
