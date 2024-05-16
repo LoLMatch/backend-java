@@ -5,7 +5,6 @@ import com.lolmatch.calendar.dto.response.DeleteResponse;
 import com.lolmatch.calendar.dto.response.MeetingResponse;
 import com.lolmatch.calendar.dto.response.MeetingScheduleResponse;
 import com.lolmatch.calendar.dto.response.MeetingsResponse;
-import com.lolmatch.calendar.model.MeetingEntity;
 import com.lolmatch.calendar.service.MeetingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +37,16 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.getAllMeetingsByPeriod(Strings.toRootUpperCase(interval)));
     }
 
+    @GetMapping("/all/bydate")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<MeetingsResponse> getMeetingsByDate(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer day) {
+        log.info("Get meetings by date with year: " + year + ", month: " + month + ", day: " + day);
+        return ResponseEntity.ok(meetingService.getMeetingsByDate(year, month, day));
+    }
+
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<MeetingResponse> getMeeting(@RequestParam UUID uuid) {
@@ -52,4 +61,3 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.deleteMeeting(uuid));
     }
 }
-
