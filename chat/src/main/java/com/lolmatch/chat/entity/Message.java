@@ -65,7 +65,11 @@ public class Message {
 		UUID parentId;
 		if ( recipient == null){
 			// grupowa
-			 statusList = readStatuses.stream().map(ReadStatus::toDto).toList();
+			if (readStatuses != null){
+				statusList = readStatuses.stream().map(ReadStatus::toDto).toList();
+			} else {
+				statusList = Collections.emptyList();
+			}
 			 recipientId = groupRecipient.getId();
 		} else {
 			// zwykła
