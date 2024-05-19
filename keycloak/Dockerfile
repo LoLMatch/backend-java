@@ -51,9 +51,9 @@ COPY --from=build --chown=keycloak:keycloak /app/keycloak/target/*.jar .
 COPY --chown=keycloak:keycloak /keycloak/*.jar  .
 
 WORKDIR /opt/keycloak
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
+RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=idp.lolmatch.click" -alias keycloak -ext "SAN:c=DNS:idp.lolmatch.click,IP:127.0.0.1" -keystore conf/server.keystore
 
 WORKDIR /
 
 COPY ./keycloak/realm.json /opt/keycloak/data/import/realm.json
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm", "--health-enabled=true"]

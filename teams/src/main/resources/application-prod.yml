@@ -1,7 +1,7 @@
 # do odpalania na k8 docelowo, tutaj pewnie jeszcze będą poprawki
 spring:
     application:
-        name: teams-service
+        name: teams
     datasource:
         url: jdbc:postgresql://database:5432/teams
         username: teams

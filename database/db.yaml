@@ -22,6 +22,7 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: postgres
+          imagePullPolicy: Always
           image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/postgres:lolmatch
           ports:
             - containerPort: 5432

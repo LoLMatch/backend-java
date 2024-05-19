@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-for var in keycloak calendar chat teams
+for var in keycloak calendar chat teams recommender
 do
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
         CREATE USER $var WITH PASSWORD '$var';
