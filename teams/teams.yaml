@@ -14,9 +14,15 @@ spec:
       containers:
         - name: teams
           image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/teams-service:lolmatch
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: teams-cm
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: teams
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
+              value: http://keycloak:80/realms/lolmatch
           ports:
             - containerPort: 8080
 ---
@@ -28,7 +34,7 @@ spec:
   selector:
     app: teams
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
 ---
 apiVersion: v1
