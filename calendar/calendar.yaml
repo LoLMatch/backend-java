@@ -21,8 +21,8 @@ spec:
             - configMapRef:
                 name: calendar-cm
           env:
-            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
-              value: http://keycloak:80/realms/lolmatch
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
           ports:
             - containerPort: 8888
 ---

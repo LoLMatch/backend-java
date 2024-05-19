@@ -23,7 +23,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: http://keycloak:8443/realms/lolmatch
+                    issuer-uri: http://idp.lolmatch.click/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
         username: guest

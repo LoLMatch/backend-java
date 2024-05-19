@@ -30,7 +30,7 @@ spec:
             - name: KC_HOSTNAME_DEBUG
               value: "true"
             - name: KC_PROXY
-              value: "passthrough"
+              value: "edge"
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
           readinessProbe:

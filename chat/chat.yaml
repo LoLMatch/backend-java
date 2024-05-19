@@ -18,8 +18,8 @@ spec:
           env:
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
               value: http://discovery-server:8761/eureka/
-            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
-              value: http://keycloak:80/realms/lolmatch
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
           ports:
             - containerPort: 8080
 ---
