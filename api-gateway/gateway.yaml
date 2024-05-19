@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,6 +16,21 @@ spec:
         - name: api-gateway
           image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/api-gateway:lolmatch
           imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
           resources:
             limits:
               memory: 512Mi
@@ -33,13 +49,11 @@ kind: Service
 metadata:
   name: api-gateway
 spec:
-  type: NodePort
   selector:
     app: api-gateway
   ports:
     - name: http
-      port: 30200
-      nodePort: 30200
+      port: 8080
       targetPort: 8080
 ---
 apiVersion: v1
