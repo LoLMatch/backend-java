@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: database/Dockerfile
-    image: postgres:${TAG}
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/postgres:${TAG}
     container_name: "database"
     platform: ${PLATFORM}
     environment:
@@ -22,7 +22,7 @@ services:
       dockerfile: rabbitmq/Dockerfile
     container_name: "rabbitmq"
     platform: ${PLATFORM}
-    image: rabbitmq:${TAG}
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/rabbitmq:${TAG}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -39,7 +39,7 @@ services:
       context: .
       dockerfile: keycloak/Dockerfile
     container_name: "keycloak"
-    image: keycloak:${TAG}
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/keycloak:${TAG}
     platform: ${PLATFORM}
     ports:
       - "8443:8443"
@@ -56,6 +56,7 @@ services:
       retries: 5
       timeout: 60s
       interval: 60s
+      start_period: 60s
 
   api-gateway:
     build:
@@ -63,7 +64,7 @@ services:
       dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
     platform: ${PLATFORM}
-    image: api-gateway:${TAG}
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/api-gateway:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     ports:
@@ -79,7 +80,7 @@ services:
       dockerfile: calendar/Dockerfile
     container_name: calendar
     platform: ${PLATFORM}
-    image: calendar:${TAG}
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/calendar:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     ports:
@@ -92,13 +93,13 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  chat:
+  chat-service:
     build:
       context: .
       dockerfile: chat/Dockerfile
     platform: ${PLATFORM}
-    container_name: "chat"
-    image: chat-service:${TAG}
+    container_name: "chat-service"
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/chat-service:${TAG}
     ports:
       - '8081:8080'
     environment:
@@ -117,7 +118,7 @@ services:
       dockerfile: teams/Dockerfile
     platform: ${PLATFORM}
     container_name: "teams-service"
-    image: teams-service:${TAG}
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/teams-service:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     ports:
@@ -138,7 +139,7 @@ services:
       dockerfile: discovery-server/Dockerfile
     container_name: discovery-server
     platform: ${PLATFORM}
-    image: discovery-server:${TAG}
+    image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/discovery-server:${TAG}
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     ports:

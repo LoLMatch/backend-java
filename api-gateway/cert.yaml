@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: gateway-certificate
+spec:
+  domains:
+    - api.lolmatch.click

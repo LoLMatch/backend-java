@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-gateway-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "api-gateway"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "mcrt-38bfa5bb-6942-4938-8263-155d5e0ae6b7"
+spec:
+  ingressClassName: gce
+  rules:
+    - host: api.lolmatch.click
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - api.lolmatch.click
+      secretName: api-gateway-tls

@@ -1,7 +1,7 @@
 # do odpalania na k8 docelowo, tutaj pewnie jeszcze będą poprawki
 spring:
     application:
-        name: teams-service
+        name: teams
     datasource:
         url: jdbc:postgresql://database:5432/teams
         username: teams
@@ -23,7 +23,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: http://keycloak:8443/realms/lolmatch
+                    issuer-uri: http://idp.lolmatch.click/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
         username: guest

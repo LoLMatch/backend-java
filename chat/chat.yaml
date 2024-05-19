@@ -2,10 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: chat
-  labels:
-    app: lolmatch
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: chat
@@ -17,21 +14,22 @@ spec:
       containers:
         - name: chat
           image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/chat-service:lolmatch
+          imagePullPolicy: Always
           env:
-            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI
-              value: https://idp.lolmatch.click/realms/lolmatch
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discovery-server:8761/eureka/
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
           ports:
             - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: chat
-  labels:
-    app: lolmatch
+  name: chat-service
 spec:
   selector:
-    name: chat
+    app: chat
   ports:
     - port: 80
       targetPort: 8080
