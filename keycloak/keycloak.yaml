@@ -52,24 +52,19 @@ spec:
           ports:
             - name: http
               containerPort: 8443
-            - name: https
-              containerPort: 8444
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     id: keycloak
   ports:
     - name: http
       port: 80
       targetPort: 8443
-    - name: https
-      port: 443
-      targetPort: 8444
 ---
 apiVersion: v1
 kind: Secret

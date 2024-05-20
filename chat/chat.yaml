@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: chat
-          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/chat-service:lolmatch
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/chat:lolmatch
           imagePullPolicy: Always
           env:
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: chat-service
+  name: chat
 spec:
   selector:
     app: chat

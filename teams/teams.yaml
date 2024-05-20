@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: teams
-          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/teams-service:lolmatch
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/teams:lolmatch
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
@@ -40,4 +40,4 @@ kind: ConfigMap
 metadata:
   name: teams-cm
 data:
-  SPRING_PROFILES_ACTIVE: prod
+  SPRING_PROFILES_ACTIVE: "prod"

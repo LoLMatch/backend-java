@@ -43,4 +43,4 @@ kind: ConfigMap
 metadata:
   name: calendar-cm
 data:
-  SPRING_PROFILES_ACTIVE: prod
+  SPRING_PROFILES_ACTIVE: "prod"

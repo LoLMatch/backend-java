@@ -40,7 +40,7 @@ ENV KC_LOG=file,console
 
 # Set port
 ENV KC_HTTP_ENABLED=true
-ENV KC_HTTP_PORT=8080
+ENV KC_HTTP_PORT=8443
 
 # Add providers
 WORKDIR /opt/keycloak/providers
