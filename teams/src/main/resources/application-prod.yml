@@ -1,11 +1,11 @@
 # do odpalania na k8 docelowo, tutaj pewnie jeszcze będą poprawki
 spring:
     application:
-        name: teams-service
+        name: teams
     datasource:
-        url: jdbc:postgresql://teams-database:5432/teams
-        username: postgres
-        password: postgres
+        url: jdbc:postgresql://database:5432/teams
+        username: teams
+        password: teams
         driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: false
@@ -23,7 +23,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: http://keycloak:8443/realms/lolmatch
+                    issuer-uri: https://idp.lolmatch.click/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
         username: guest
@@ -37,4 +37,3 @@ eureka:
             defaultZone: http://discovery-server:8761/eureka/
         register-with-eureka: true
         fetch-registry: true
-

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar
+  labels:
+    app: calendar
+spec:
+  selector:
+    matchLabels:
+      app: calendar
+  template:
+    metadata:
+      labels:
+        app: calendar
+    spec:
+      containers:
+        - name: calendar
+          imagePullPolicy: Always
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/calendar:lolmatch
+          envFrom:
+            - configMapRef:
+                name: calendar-cm
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+          ports:
+            - containerPort: 8888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calendar
+spec:
+  type: ClusterIP
+  selector:
+    app: calendar
+  ports:
+    - port: 80
+      targetPort: 8888
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calendar-cm
+data:
+  SPRING_PROFILES_ACTIVE: "prod"

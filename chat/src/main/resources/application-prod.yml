@@ -1,11 +1,10 @@
-# do odpalania w docker-compose
 spring:
     application:
-        name: teams
+        name: chat
     datasource:
-        url: jdbc:postgresql://database:5432/teams
-        username: teams
-        password: teams
+        url: jdbc:postgresql://database:5432/chat
+        username: chat
+        password: chat
         driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: true
@@ -23,14 +22,14 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: http://keycloak:8443/realms/lolmatch
+                    issuer-uri: https://idp.lolmatch.click/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
-        username: admin
-        password: password
+        username: guest
+        password: guest
 server:
     servlet:
-        context-path: /api/teams
+        context-path: /api/chat
 eureka:
     client:
         serviceUrl:
