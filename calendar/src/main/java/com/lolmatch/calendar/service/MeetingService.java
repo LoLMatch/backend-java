@@ -105,6 +105,35 @@ public class MeetingService {
         return new MeetingsResponse(SUCCESS, interval, meetings);
     }
 
+    public MeetingsResponse getMeetingsByDate(Integer year, Integer month, Integer day) {
+        final MeetingStatus meetingStatus = meetingValidator.isValid(year, month, day);
+        if (!meetingStatus.isCorrect()) {
+            return new MeetingsResponse(meetingStatus, null);
+        }
+
+        final UUID currentUser = audit.getCurrentAuditor()
+                .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("User has to be authenticated!"));
+
+        LocalDateTime startTime;
+        LocalDateTime endTime;
+        String dateDescription;
+
+        if (year != null && month != null && day != null) {
+            startTime = LocalDateTime.of(year, month, day, 0, 0, 0);
+            endTime = LocalDateTime.of(year, month, day, 23, 59, 59);
+            dateDescription = String.format("%d-%02d-%02d", year, month, day);
+        } else if (year != null && month != null) {
+            startTime = LocalDateTime.of(year, month, 1, 0, 0, 0);
+            endTime = LocalDateTime.of(year, month, startTime.toLocalDate().lengthOfMonth(), 23, 59, 59);
+            dateDescription = String.format("%d-%02d", year, month);
+        } else {
+            throw new IllegalArgumentException("Invalid date parameters");
+        }
+
+        final List<MeetingEntity> meetings = meetingRepository.findAllMeetingsByPeriodAndCreator(startTime, endTime, currentUser);
+        return new MeetingsResponse(SUCCESS, dateDescription, meetings);
+    }
+
     public DeleteResponse deleteMeeting(UUID uuid) {
         final UUID currentUser = audit.getCurrentAuditor()
                 .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("User has to be authenticated!"));

@@ -5,7 +5,7 @@ metadata:
   labels:
     id: keycloak
 spec:
-  replicas: 4
+  replicas: 1
   selector:
     matchLabels:
       id: keycloak
@@ -16,31 +16,61 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: europe-central2-docker.pkg.dev/lolmatch-407019/backend-java/keycloak
-          envFrom:
-            - configMapRef:
-                name: keycloak-configuration
+          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/keycloak:lolmatch
+          imagePullPolicy: Always
+          env:
+            - name: KC_HOSTNAME
+              value: "idp.lolmatch.click"
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+            - name: KC_HOSTNAME_STRICT_HTTPS
+              value: "false"
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                    name: keycloak-credentials
+                    key: user
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                    name: keycloak-credentials
+                    key: password
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8443
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8443
+            initialDelaySeconds: 30
+            periodSeconds: 10
           ports:
-            - containerPort: 8443
+            - name: http
+              containerPort: 8443
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
 spec:
-  # type: LoadBalancer TODO HELM
+  type: ClusterIP
   selector:
     id: keycloak
   ports:
-    - port: 9090
+    - name: http
+      port: 80
       targetPort: 8443
 ---
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: keycloak-configuration
+  name: keycloak-credentials
+type: Opaque
 data:
-  AMQP_HOSTNAME: rabbitmq
-  AMQP_PORT: "5672"
-  AMQP_USERNAME: user
-  AMQP_PASSWORD: password
+  user: YWRtaW4K
+  password: N2FNdkBmVG9wITkkWURnRg==

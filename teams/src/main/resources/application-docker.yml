@@ -1,16 +1,16 @@
-# do odpalania na prod
+# do odpalania w docker-compose
 spring:
     application:
-        name: teams-service
+        name: teams
     datasource:
-        url: jdbc:postgresql://teams-database:5432/teams
-        username: postgres
-        password: postgres
+        url: jdbc:postgresql://database:5432/teams
+        username: teams
+        password: teams
         driver-class-name: org.postgresql.Driver
     jpa:
-        show-sql: false
+        show-sql: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: create-drop
         properties:
             hibernate:
                 default_schema: public
@@ -26,8 +26,8 @@ spring:
                     issuer-uri: http://keycloak:8443/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
-        username: guest
-        password: guest
+        username: admin
+        password: password
 server:
     servlet:
         context-path: /api/teams

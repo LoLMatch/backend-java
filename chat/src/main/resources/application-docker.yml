@@ -4,9 +4,9 @@ spring:
     application:
         name: chat-service
     datasource:
-        url: jdbc:postgresql://chat-database:5432/chat
-        username: postgres
-        password: postgres
+        url: jdbc:postgresql://database:5432/chat
+        username: chat
+        password: chat
         driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: true
@@ -20,12 +20,12 @@ spring:
         open-in-view: false
     jackson:
         deserialization:
-          fail-on-unknown-properties: false
+            fail-on-unknown-properties: false
     security:
-      oauth2:
-        resourceserver:
-          jwt:
-              issuer-uri: http://keycloak:8443/realms/lolmatch
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://keycloak:8443/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
         username: guest

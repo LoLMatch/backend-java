@@ -17,7 +17,8 @@ jobs:
       - name: Install docker compose and build images
         run: |
           apt-get update && apt-get install -y docker-compose
-          docker-compose build
+          echo ${{ secrets.ARTIFACT_REPO }} >> .env
+          docker-compose build --quiet
 
       - name: 'Authenticate with Google Cloud'
         uses: 'google-github-actions/auth@v2'

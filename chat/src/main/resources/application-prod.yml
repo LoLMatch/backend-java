@@ -1,11 +1,11 @@
 # konfiguracja do deploymentu
 spring:
     application:
-        name: chat-service
+        name: chat
     datasource:
-        url: jdbc:postgresql://chat-database:5432/chat
-        username: postgres
-        password: postgres
+        url: jdbc:postgresql://database:5432/chat
+        username: chat
+        password: chat
         driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: false
@@ -23,7 +23,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: http://keycloak:8443/realms/lolmatch
+                    issuer-uri: https://idp.lolmatch.click/realms/lolmatch
     rabbitmq:
         addresses: rabbitmq
         username: guest
@@ -31,3 +31,9 @@ spring:
 server:
     servlet:
         context-path: /api/chat
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://discovery-server:8761/eureka/
+        register-with-eureka: true
+        fetch-registry: true
