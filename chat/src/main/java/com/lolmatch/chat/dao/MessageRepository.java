@@ -24,7 +24,7 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
 	
 	@Query(value =
 	"""
-	SELECT new com.lolmatch.chat.dto.MessageDTO(m.id, m.content, m.createdAt, m.readAt, m.sender.id, m.recipient.id, m.parentMessage.id)\s
+	SELECT new com.lolmatch.chat.dto.MessageDTO( "MESSAGE", m.id, m.content, m.createdAt, m.readAt, m.sender.id, m.recipient.id, m.parentMessage.id)\s
 		FROM Message m WHERE (m.sender.id = ?1 AND m.recipient.id = ?2) OR (m.sender.id = ?2 AND m.recipient.id = ?1) ORDER BY m.createdAt DESC
 	""", countQuery = "SELECT count(m.id) FROM Message m WHERE (m.sender.id = ?1 AND m.recipient.id = ?2) OR (m.sender.id = ?2 AND m.recipient.id = ?1)"
 	)
@@ -46,12 +46,12 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
 	
 	@Query(value =
    """
-	SELECT new com.lolmatch.chat.dto.MessageDTO(m.id, m.content, m.createdAt, m.readAt, m.sender.id, m.recipient.id)
-	FROM Message m WHERE (m.sender.id = ?1 OR m.recipient.id = ?1)
-	AND (m.sender.id IN (SELECT c.user.id FROM Contact c WHERE c.user.id = ?1) OR m.recipient.id IN (SELECT c.user.id FROM Contact c WHERE c.user.id = ?1))
-	AND m.createdAt = (SELECT MAX(m2.createdAt) FROM Message m2 WHERE ((m2.sender = m.sender AND m2.recipient = m.recipient) OR (m2.sender = m.recipient AND m2.recipient = m.sender))
-	ORDER BY m.createdAt DESC)
-	""")
+		   SELECT new com.lolmatch.chat.dto.MessageDTO( "MESSAGE", m.id, m.content, m.createdAt, m.readAt, m.sender.id, m.recipient.id)
+		   FROM Message m WHERE (m.sender.id = ?1 OR m.recipient.id = ?1)
+		   AND (m.sender.id IN (SELECT c.user.id FROM Contact c WHERE c.user.id = ?1) OR m.recipient.id IN (SELECT c.user.id FROM Contact c WHERE c.user.id = ?1))
+		   AND m.createdAt = (SELECT MAX(m2.createdAt) FROM Message m2 WHERE ((m2.sender = m.sender AND m2.recipient = m.recipient) OR (m2.sender = m.recipient AND m2.recipient = m.sender))
+		   ORDER BY m.createdAt DESC)
+		   """)
 	// TODO - sprawdzić czy tutaj będzie dodatkowo pobierać userów, jak tak to dodać JOIN FETCH Users u
 	List<MessageDTO> getLastMessagesBetweenUserAndContact(UUID userId);
 }
