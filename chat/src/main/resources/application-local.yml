@@ -1,7 +1,7 @@
 # konfiguracja do testów lokalnych, nie w kontenerze
 spring:
     application:
-        name: chat-service
+        name: chat
     datasource:
         url: jdbc:postgresql://localhost:5432/chat
         username: chat
