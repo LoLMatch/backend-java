@@ -53,7 +53,7 @@ public class MessageService {
 			// fetch for group
 			Page<Message> messagePage;
 			messagePage = messageRepository.findAllByGroupRecipientIdOrderByCreatedAtDesc(secondId, pageable);
-			return new MessageListDTO(messageListToDto(messagePage.getContent()), messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalElements());
+			return new MessageListDTO(messageListToDto(messagePage.getContent(), "MESSAGE_GROUP"), messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalElements());
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class MessageService {
 		if (incomingMessage.parentId() != null) {
 			message.setParentMessage(messageRepository.getReferenceById(incomingMessage.parentId()));
 		}
-		MessageDTO dto = messageRepository.save(message).toDto();
+		MessageDTO dto = messageRepository.save(message).toDto("MESSAGE");
 		
 		messagingTemplate.convertAndSend("/topic/chat/" + dto.recipientId(), dto);
 		messagingTemplate.convertAndSend("/topic/chat/" + dto.senderId(), dto);
@@ -93,7 +93,7 @@ public class MessageService {
 		if (incomingMessage.parentId() != null) {
 			message.setParentMessage(messageRepository.getReferenceById(incomingMessage.parentId()));
 		}
-		MessageDTO dto = messageRepository.save(message).toDto();
+		MessageDTO dto = messageRepository.save(message).toDto("MESSAGE_GROUP");
 		
 		group.getUsers().forEach(user -> {
 			SimpUser simpUser = userRegistry.getUser(user.getId().toString());
@@ -126,11 +126,11 @@ public class MessageService {
 		});
 	}
 	
-	private List<MessageDTO> messageListToDto(List<Message> messages) {
+	private List<MessageDTO> messageListToDto(List<Message> messages, String action) {
 		if (messages.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return messages.stream().map(Message::toDto).toList();
+		return messages.stream().map( m -> m.toDto(action)).toList();
 	}
 	
 	private Timestamp setTime(IncomingMessageDTO dto) {

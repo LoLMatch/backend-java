@@ -59,7 +59,7 @@ public class Message {
 	@OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
 	private List<ReadStatus> readStatuses;
 	
-	public MessageDTO toDto(){
+	public MessageDTO toDto(String action){
 		List<ReadStatusDTO> statusList;
 		UUID recipientId;
 		UUID parentId;
@@ -81,6 +81,6 @@ public class Message {
 		} else {
 			parentId = parentMessage.getId();
 		}
-		return new MessageDTO(id, content,createdAt,readAt,sender.getId(),recipientId, parentId, statusList);
+		return new MessageDTO( action, id, content,createdAt,readAt,sender.getId(),recipientId, parentId, statusList);
 	}
 }
