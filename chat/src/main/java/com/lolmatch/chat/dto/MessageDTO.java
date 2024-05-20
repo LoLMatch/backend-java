@@ -25,4 +25,8 @@ public record MessageDTO
 	public MessageDTO( String action, UUID id, String content,  Timestamp createdAt, Timestamp readAt, UUID senderId, UUID recipientId, UUID parentMessageId) {
 		this(action, id, content, createdAt, readAt, senderId, recipientId, parentMessageId, null);
 	}
+	
+	public MessageDTO( UUID id, String content,  Timestamp createdAt, Timestamp readAt, UUID senderId, UUID recipientId, UUID parentMessageId) {
+		this("MESSAGE", id, content, createdAt, readAt, senderId, recipientId, parentMessageId, null);
+	}
 }
