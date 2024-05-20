@@ -35,13 +35,12 @@ ENV AMQP_PASSWORD=$AMQP_PASSWORD
 ENV KC_LOG=file,console
 
 # Create admin
-ENV KEYCLOAK_ADMIN=admin
-ENV KEYCLOAK_ADMIN_PASSWORD=password
+#ENV KEYCLOAK_ADMIN=admin
+#ENV KEYCLOAK_ADMIN_PASSWORD=password
 
 # Set port
 ENV KC_HTTP_ENABLED=true
-ENV KC_HTTP_PORT=8443
-ENV KC_HTTPS_PORT=8444
+ENV KC_HTTP_PORT=8080
 
 # Add providers
 WORKDIR /opt/keycloak/providers
@@ -49,9 +48,6 @@ WORKDIR /opt/keycloak/providers
 COPY --from=build --chown=keycloak:keycloak /app/keycloak/target/*.jar .
 # Ponizsze jest do zmiany, bo .jar powinien byc wynikiem builda
 COPY --chown=keycloak:keycloak /keycloak/*.jar  .
-
-WORKDIR /opt/keycloak
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=idp.lolmatch.click" -alias keycloak -ext "SAN:c=DNS:idp.lolmatch.click,IP:127.0.0.1" -keystore conf/server.keystore
 
 WORKDIR /
 
