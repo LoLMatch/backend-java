@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -62,10 +63,29 @@ public class MeetingValidator {
         return SUCCESS;
     }
 
-
     public MeetingStatus isValid(String interval) {
         if (!meetingDictionaryHelper.getWholeIntervalDictionaryAsSet().contains(interval)) {
             return INVALID;
+        }
+
+        return SUCCESS;
+    }
+
+    public MeetingStatus isValid(Integer year, Integer month, Integer day) {
+        if (year == null || month == null) {
+            return INVALID;
+        }
+
+        if (month < 1 || month > 12) {
+            return INVALID;
+        }
+
+        if (day != null) {
+            try {
+                LocalDate.of(year, month, day);
+            } catch (Exception e) {
+                return INVALID;
+            }
         }
 
         return SUCCESS;
