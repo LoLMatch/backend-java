@@ -1,6 +1,6 @@
 package com.lolmatch.chat.controller;
 
-import com.lolmatch.chat.dto.ContactDTO;
+import com.lolmatch.chat.dto.ContactListDTO;
 import com.lolmatch.chat.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class ContactController {
 	
 	@GetMapping()
 	@PreAuthorize("#id.toString() == #principal.name.toString()")
-	public ContactDTO getContactsOfUser(@RequestParam("id")UUID id, Principal principal){
+	public ContactListDTO getContactsOfUser(@RequestParam("id")UUID id, Principal principal){
 		log.info("Get contacts request, details: id - " + id + ", principal - " + principal.toString());
 		return contactService.getContactListForUser(id);
 	}

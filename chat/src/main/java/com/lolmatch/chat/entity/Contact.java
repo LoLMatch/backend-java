@@ -20,13 +20,11 @@ public class Contact {
 	private UUID id;
 	
 	@JsonManagedReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
 	
-	@Column
-	private UUID contactId;
-	
-	@Column
-	private String contactUsername;
+	@JsonManagedReference
+	@ManyToOne(fetch = FetchType.EAGER)
+	private User contact;
 	
 }

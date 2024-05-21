@@ -1,3 +1,4 @@
+# konfiguracja do deploymentu
 spring:
     application:
         name: chat
@@ -7,9 +8,9 @@ spring:
         password: chat
         driver-class-name: org.postgresql.Driver
     jpa:
-        show-sql: true
+        show-sql: false
         hibernate:
-            ddl-auto: create-drop
+            ddl-auto: update
         properties:
             hibernate:
                 default_schema: public
