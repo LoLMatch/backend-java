@@ -3,7 +3,6 @@ package com.lolmatch.chat.service;
 import com.lolmatch.chat.dao.UserRepository;
 import com.lolmatch.chat.dto.UserDTO;
 import com.lolmatch.chat.entity.User;
-import com.netflix.discovery.EurekaClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +19,6 @@ import java.util.UUID;
 public class UserService {
 	
 	private final UserRepository userRepository;
-	
-	private final EurekaClient eurekaClient;
 	
 	private final Environment environment;
 	
@@ -51,7 +48,6 @@ public class UserService {
 		if (environment.matchesProfiles("local")) {
 			url = "http://localhost:5000";
 		} else {
-			//url = "http://" + instance.getIPAddr() + ":" + instance.getPort();
 			url = "http://recommender:5000";
 		}
 		

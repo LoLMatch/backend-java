@@ -78,10 +78,10 @@ public class ContactService {
 		Map<UUID, MessageDTO> lastMessages = messageRepository.getLastMessagesBetweenUserAndContact(id)
 				.stream()
 				.map(message -> {
-					UUID messageContactId = message.recipientId() == id ? message.senderId() : message.recipientId();
+					UUID messageContactId = message.recipientId().equals(id) ? message.senderId() : message.recipientId();
+					System.out.println(messageContactId);
 					return new MessageContactRecord(messageContactId, message);
-				})
-				.collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
+				}).collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
 		List<ContactDTO> contacts = user.getContacts().stream().map(contact -> {
 			int ppId = contact.getContact().getProfilePictureId();
 			if ( ppId == 0){
