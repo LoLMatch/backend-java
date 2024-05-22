@@ -78,8 +78,8 @@ public class ContactService {
 		Map<UUID, MessageDTO> lastMessages = messageRepository.getLastMessagesBetweenUserAndContact(id)
 				.stream()
 				.map(message -> {
-					UUID messageContactId = message.recipientId().equals(id) ? message.recipientId() : message.senderId();
-					System.out.println(messageContactId);
+					UUID messageContactId = message.senderId().equals(id) ? message.recipientId() : message.senderId();
+					//System.out.println(messageContactId);
 					return new MessageContactRecord(messageContactId, message);
 				}).collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
 		List<ContactDTO> contacts = user.getContacts().stream().map(contact -> {
@@ -97,7 +97,7 @@ public class ContactService {
 				lastMessageTimestamp = null;
 			} else {
 				lastMessageContent = lastMessage.content();
-				lastMessageSenderId = lastMessage.senderId() == id ? id : contact.getContact().getId();
+				lastMessageSenderId = lastMessage.senderId();
 				lastMessageTimestamp = lastMessage.createdAt();
 			}
 			SimpUser simpUser = simpUserRegistry.getUser(String.valueOf(contact.getContact().getId()));
