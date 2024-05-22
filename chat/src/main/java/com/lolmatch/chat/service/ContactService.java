@@ -78,7 +78,7 @@ public class ContactService {
 		Map<UUID, MessageDTO> lastMessages = messageRepository.getLastMessagesBetweenUserAndContact(id)
 				.stream()
 				.map(message -> {
-					UUID messageContactId = message.recipientId().equals(id) ? message.senderId() : message.recipientId();
+					UUID messageContactId = message.recipientId().equals(id) ? message.recipientId() : message.senderId();
 					System.out.println(messageContactId);
 					return new MessageContactRecord(messageContactId, message);
 				}).collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
