@@ -31,7 +31,7 @@ public class AmqpUserMatchReceiver {
 		ObjectMapper objectMapper = new ObjectMapper();
 		userMatch match = objectMapper.readValue(in, userMatch.class);
 		
-		//contactService.saveContact(match.firstUserId, match.secondUserId);
+		contactService.saveContact(match.firstUserId, match.secondUserId);
 	}
 	
 	private record userMatch(UUID firstUserId, UUID secondUserId){}
