@@ -79,7 +79,6 @@ public class ContactService {
 				.stream()
 				.map(message -> {
 					UUID messageContactId = message.senderId().equals(id) ? message.recipientId() : message.senderId();
-					//System.out.println(messageContactId);
 					return new MessageContactRecord(messageContactId, message);
 				}).collect(Collectors.toMap(MessageContactRecord::userId, MessageContactRecord::message));
 		List<ContactDTO> contacts = user.getContacts().stream().map(contact -> {
