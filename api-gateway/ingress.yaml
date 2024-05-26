@@ -5,7 +5,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.global-static-ip-name: "api-gateway"
-    ingress.gcp.kubernetes.io/pre-shared-cert: "mcrt-38bfa5bb-6942-4938-8263-155d5e0ae6b7"
+    networking.gke.io/managed-certificates: "gateway-certificate"
 spec:
   ingressClassName: gce
   rules:
@@ -19,7 +19,11 @@ spec:
                 name: api-gateway
                 port:
                   number: 8080
-  tls:
-    - hosts:
-        - api.lolmatch.click
-      secretName: api-gateway-tls
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: gateway-certificate
+spec:
+  domains:
+    - api.lolmatch.click

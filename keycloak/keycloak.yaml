@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/keycloak:lolmatch
+          image: europe-central2-docker.pkg.dev/flawless-lacing-424510-g2/backend-java/keycloak:lolmatch
           imagePullPolicy: Always
           env:
             - name: KC_HOSTNAME
@@ -28,15 +28,9 @@ spec:
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
             - name: KEYCLOAK_ADMIN
-              valueFrom:
-                secretKeyRef:
-                    name: keycloak-credentials
-                    key: user
+              value: "admin"
             - name: KEYCLOAK_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                    name: keycloak-credentials
-                    key: password
+              value: "password"
           readinessProbe:
             httpGet:
               path: /health/ready
@@ -65,12 +59,3 @@ spec:
     - name: http
       port: 80
       targetPort: 8443
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: keycloak-credentials
-type: Opaque
-data:
-  user: YWRtaW4K
-  password: N2FNdkBmVG9wITkkWURnRg==

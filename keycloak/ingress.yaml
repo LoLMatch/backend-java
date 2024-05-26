@@ -19,3 +19,11 @@ spec:
                 name: keycloak
                 port:
                   number: 80
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: keycloak-certificate
+spec:
+  domains:
+    - idp.lolmatch.click

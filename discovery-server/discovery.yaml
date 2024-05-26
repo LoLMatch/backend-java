@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: discovery-server
-          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/discovery-server:lolmatch
+          image: europe-central2-docker.pkg.dev/flawless-lacing-424510-g2/backend-java/discovery-server:lolmatch
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: docker

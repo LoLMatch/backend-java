@@ -14,22 +14,22 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/api-gateway:lolmatch
+          image: europe-central2-docker.pkg.dev/flawless-lacing-424510-g2/backend-java/api-gateway:lolmatch
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 90
+            periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 90
+            periodSeconds: 15
 
           resources:
             limits:
@@ -61,4 +61,4 @@ kind: ConfigMap
 metadata:
   name: api-gateway-cm
 data:
-  SPRING_PROFILES_ACTIVE: prod
+  SPRING_PROFILES_ACTIVE: "prod"

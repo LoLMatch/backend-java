@@ -13,11 +13,9 @@ spec:
     spec:
       containers:
         - name: chat
-          image: europe-central2-docker.pkg.dev/lolmatch-415913/backend-java/chat:lolmatch
+          image: europe-central2-docker.pkg.dev/flawless-lacing-424510-g2/backend-java/chat:lolmatch
           imagePullPolicy: Always
           env:
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://discovery-server:8761/eureka/
             - name: SPRING_PROFILES_ACTIVE
               value: prod
           ports:
