@@ -152,7 +152,7 @@ services:
     networks:
       - lm-network
     healthcheck:
-      test: [ "CMD-SHELL", "echo -n > /dev/tcp/127.0.0.1/8761" ]
+      test: [ "CMD-SHELL", "wget http://localhost:8761/actuator/health" ]
       retries: 5
       timeout: 60s
       interval: 20s
