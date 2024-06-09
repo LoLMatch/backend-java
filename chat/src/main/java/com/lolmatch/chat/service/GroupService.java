@@ -7,6 +7,8 @@ import com.lolmatch.chat.entity.Group;
 import com.lolmatch.chat.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GroupService {
 	
+	private static final Logger log = LoggerFactory.getLogger(GroupService.class);
 	private final GroupRepository groupRepository;
 	
 	private final UserRepository userRepository;

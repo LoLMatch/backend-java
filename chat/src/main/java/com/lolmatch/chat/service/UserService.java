@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,8 +48,12 @@ public class UserService {
 		String url;
 		if (environment.matchesProfiles("local")) {
 			url = "http://localhost:5000";
-		} else {
+		} else if (environment.matchesProfiles("docker")){
 			url = "http://recommender:5000";
+		} else if (environment.matchesProfiles("prod")){
+			url = "http://recommender";
+		} else {
+			throw new RuntimeException("Wrong profile: " + Arrays.toString(environment.getActiveProfiles()));
 		}
 		
 		RestClient client = RestClient.builder()
@@ -59,7 +64,7 @@ public class UserService {
 		try {
 			result = client.get()
 					.uri(uriBuilder -> uriBuilder
-							.path("/profile")
+							.path("/api/recommender/profile")
 							.queryParam("summoner_id", id)
 							.build())
 					.retrieve()

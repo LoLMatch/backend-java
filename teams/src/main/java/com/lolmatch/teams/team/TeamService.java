@@ -9,12 +9,14 @@ import com.lolmatch.teams.util.AmqpTeamChangesTransmitter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 
 import java.security.Principal;
 import java.util.*;
@@ -31,6 +33,8 @@ public class TeamService {
 	private final PasswordEncoder passwordEncoder;
 	
 	private final AmqpTeamChangesTransmitter transmitter;
+	
+	private final Environment environment;
 	
 	@Transactional(readOnly = true)
 	TeamListDTO getTeamsFilteredAndPaginated(Pageable pageable, Optional<String> country, Optional<Rank> rank) {
@@ -51,6 +55,9 @@ public class TeamService {
 		}
 		String password = dto.password() != null ? passwordEncoder.encode(dto.password()) : "";
 		User leader = getUserById(dto.leaderId());
+		if(leader.getProfilePictureId() == 0){
+			leader.setProfilePictureId(updateProfilePicture(leader.getId()));
+		}
 		if (leader.getTeam() != null) {
 			throw new EntityNotFoundException("There is already a team associated with this leader");
 		}
@@ -142,7 +149,10 @@ public class TeamService {
 			log.info("Tried to add more than 10 members to a team: "  + userId + ";" + teamId);
 			throw new IllegalArgumentException("Team cannot have more than 10 members");
 		}
-		User member = userRepository.getReferenceById(userId);
+		User member = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("No user found"));
+		if(member.getProfilePictureId() == 0){
+			member.setProfilePictureId(updateProfilePicture(member.getId()));
+		}
 		team.addMember(member);
 		transmitter.transmitUserChange(team.getId(), userId, AmqpTeamChangesTransmitter.UserChangeEnum.JOIN);
 		
@@ -174,4 +184,49 @@ public class TeamService {
 				.map(Team::toDto)
 				.toList();
 	}
+	
+	public int updateProfilePicture(UUID id) {
+		// var instance = eurekaClient.getNextServerFromEureka("recommender", false);
+		
+		String url;
+		if (environment.matchesProfiles("local")) {
+			url = "http://localhost:5000";
+		} else if (environment.matchesProfiles("docker")){
+			url = "http://recommender:5000";
+		} else if (environment.matchesProfiles("prod")){
+			url = "http://recommender";
+		} else {
+			throw new RuntimeException("Wrong profile: " + Arrays.toString(environment.getActiveProfiles()));
+		}
+		
+		RestClient client = RestClient.builder()
+				.baseUrl(url)
+				.build();
+		
+		ProfileDto result;
+		try {
+			result = client.get()
+					.uri(uriBuilder -> uriBuilder
+							.path("/api/recommender/profile")
+							.queryParam("summoner_id", id)
+							.build())
+					.retrieve()
+					.toEntity(ProfileDto.class)
+					.getBody();
+		} catch (Exception e) {
+			log.warn("Cannot fetch profile picture id");
+			return 0;
+		}
+		
+		if (result == null || !result.id.equals(id)) {
+			throw new RuntimeException("Wrong ppid fetch");
+		}
+		
+		userRepository.updateProfilePicture(result.icon_id, id);
+		
+		return result.icon_id;
+	}
+	
+	private record ProfileDto(UUID id, int icon_id){}
+	
 }
